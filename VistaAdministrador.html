@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Panel de Administrador | Clínica Tezza</title>
+    <link rel="stylesheet" href="vistaadministrador.css" />
+  </head>
+
+  <body>
+    <!-- =========================================
+         HEADER
+    ========================================== -->
+    <header class="header-dashboard">
+      <!-- LOGO -->
+      <div class="logo">CLÍNICA TEZZA</div>
+
+      <!-- MENÚ SUPERIOR -->
+      <nav class="menu-dashboard">
+        <a href="#">Nosotros</a>
+        <a href="#">Especialistas</a>
+        <a href="#">Contactos</a>
+      </nav>
+
+      <!-- USUARIO -->
+      <div class="usuario-header">
+        <div class="avatar">A</div>
+
+        <div class="usuario-info">
+          <span>Administrador</span>
+          <small>Panel administrativo</small>
+        </div>
+      </div>
+    </header>
+
+    <!-- =========================================
+         CONTENEDOR PRINCIPAL
+    ========================================== -->
+    <div class="layout-dashboard">
+      <!-- =====================================
+             SIDEBAR
+        ====================================== -->
+      <aside class="sidebar">
+        <div class="sidebar-titulo">MENÚ PRINCIPAL</div>
+
+        <nav class="sidebar-menu">
+          <a href="#" class="menu-activo">
+            <span class="icono-sidebar">+</span>
+            <span>Reserva de citas</span>
+          </a>
+
+          <a href="#">
+            <span class="icono-sidebar">◷</span>
+            <span>Especialidades</span>
+          </a>
+
+          <a href="#">
+            <span class="icono-sidebar">♡</span>
+            <span>Especialistas</span>
+          </a>
+
+          <a href="#">
+            <span class="icono-sidebar">▤</span>
+            <span>Historial</span>
+          </a>
+
+          <a href="#">
+            <span class="icono-sidebar">⚙</span>
+            <span>Configuración</span>
+          </a>
+        </nav>
+
+        <!-- USUARIO DEL SIDEBAR -->
+        <div class="sidebar-usuario">
+          <div class="avatar">A</div>
+
+          <div>
+            <strong>Administrador</strong>
+            <small>Admin</small>
+          </div>
+        </div>
+      </aside>
+
+      <!-- =====================================
+             CONTENIDO PRINCIPAL
+        ====================================== -->
+      <main class="dashboard">
+        <!-- =================================
+                 CABECERA DEL CONTENIDO
+            ================================== -->
+        <section class="bienvenida">
+          <div>
+            <span class="subtitulo"> PANEL DE RESERVA DE CITAS </span>
+
+            <h1>¡Hola, Administrador!</h1>
+
+            <p>Gestiona las reservas y citas médicas de la Clínica Tezza.</p>
+          </div>
+
+          <button class="btn-nueva-cita">+ Nueva reserva</button>
+        </section>
+
+        <!-- =================================
+                 TARJETAS DE ESTADÍSTICAS
+            ================================== -->
+        <section class="estadisticas">
+          <!-- TARJETA 1 -->
+          <article class="tarjeta-estadistica">
+            <div class="estadistica-icono">📅</div>
+
+            <div>
+              <span>Citas de hoy</span>
+              <strong>24</strong>
+            </div>
+          </article>
+
+          <!-- TARJETA 2 -->
+          <article class="tarjeta-estadistica">
+            <div class="estadistica-icono">⏳</div>
+
+            <div>
+              <span>Pendientes</span>
+              <strong>08</strong>
+            </div>
+          </article>
+
+          <!-- TARJETA 3 -->
+          <article class="tarjeta-estadistica">
+            <div class="estadistica-icono">✓</div>
+
+            <div>
+              <span>Confirmadas</span>
+              <strong>14</strong>
+            </div>
+          </article>
+
+          <!-- TARJETA 4 -->
+          <article class="tarjeta-estadistica">
+            <div class="estadistica-icono">×</div>
+
+            <div>
+              <span>Canceladas</span>
+              <strong>02</strong>
+            </div>
+          </article>
+        </section>
+
+        <!-- =================================
+                 RESERVAS
+            ================================== -->
+        <section class="seccion-reservas">
+          <!-- CABECERA -->
+          <div class="cabecera-reservas">
+            <div>
+              <h2>Reservas de citas</h2>
+
+              <p>Consulta y administra las citas registradas.</p>
+            </div>
+
+            <!-- BUSCADOR -->
+            <div class="buscador">
+              <input type="text" placeholder="Buscar paciente..." />
+
+              <button>Buscar</button>
+            </div>
+          </div>
+
+          <!-- =================================
+                     TABLA DE RESERVAS
+                ================================== -->
+          <div class="tabla-contenedor">
+            <table class="tabla-reservas">
+              <thead>
+                <tr>
+                  <th>N.º</th>
+
+                  <th>Paciente</th>
+
+                  <th>Especialidad</th>
+
+                  <th>Especialista</th>
+
+                  <th>Fecha</th>
+
+                  <th>Hora</th>
+
+                  <th>Estado</th>
+
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <!-- RESERVA 001 -->
+                <tr>
+                  <td>001</td>
+
+                  <td>
+                    <strong> Stefany Ramires Salas </strong>
+                  </td>
+
+                  <td>Cardiología</td>
+
+                  <td>Rocío Ramos Flores</td>
+
+                  <td>25/11/2026</td>
+
+                  <td>15:30</td>
+
+                  <td>
+                    <span class="estado pendiente"> Pendiente </span>
+                  </td>
+
+                  <td>
+                    <div class="acciones">
+                      <button class="btn-ver">Ver</button>
+
+                      <button class="btn-editar">Editar</button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- RESERVA 002 -->
+                <tr>
+                  <td>002</td>
+
+                  <td>
+                    <strong> Carlos Mendoza Pérez </strong>
+                  </td>
+
+                  <td>Cardiología</td>
+
+                  <td>Rocío Ramos Flores</td>
+
+                  <td>25/11/2026</td>
+
+                  <td>16:00</td>
+
+                  <td>
+                    <span class="estado confirmada"> Confirmada </span>
+                  </td>
+
+                  <td>
+                    <div class="acciones">
+                      <button class="btn-ver">Ver</button>
+
+                      <button class="btn-editar">Editar</button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- RESERVA 003 -->
+                <tr>
+                  <td>003</td>
+
+                  <td>
+                    <strong> María Torres García </strong>
+                  </td>
+
+                  <td>Oftalmología</td>
+
+                  <td>Jorge Pérez Castillo</td>
+
+                  <td>26/11/2026</td>
+
+                  <td>09:30</td>
+
+                  <td>
+                    <span class="estado pendiente"> Pendiente </span>
+                  </td>
+
+                  <td>
+                    <div class="acciones">
+                      <button class="btn-ver">Ver</button>
+
+                      <button class="btn-editar">Editar</button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- RESERVA 004 -->
+                <tr>
+                  <td>004</td>
+
+                  <td>
+                    <strong> Luis Fernández Ruiz </strong>
+                  </td>
+
+                  <td>Pediatría</td>
+
+                  <td>Ana María López</td>
+
+                  <td>26/11/2026</td>
+
+                  <td>11:00</td>
+
+                  <td>
+                    <span class="estado confirmada"> Confirmada </span>
+                  </td>
+
+                  <td>
+                    <div class="acciones">
+                      <button class="btn-ver">Ver</button>
+
+                      <button class="btn-editar">Editar</button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- RESERVA 005 -->
+                <tr>
+                  <td>005</td>
+
+                  <td>
+                    <strong> Andrea Castillo León </strong>
+                  </td>
+
+                  <td>Dermatología</td>
+
+                  <td>Patricia Gómez</td>
+
+                  <td>26/11/2026</td>
+
+                  <td>14:30</td>
+
+                  <td>
+                    <span class="estado cancelada"> Cancelada </span>
+                  </td>
+
+                  <td>
+                    <div class="acciones">
+                      <button class="btn-ver">Ver</button>
+
+                      <button class="btn-editar">Editar</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- =================================
+                 PRÓXIMAS CITAS
+            ================================== -->
+        <section class="proximas-citas">
+          <div class="cabecera-seccion">
+            <div>
+              <h2>Próximas citas</h2>
+
+              <p>Citas programadas para los siguientes días.</p>
+            </div>
+
+            <a href="#"> Ver todas </a>
+          </div>
+
+          <div class="lista-citas">
+            <article class="cita">
+              <div class="fecha-cita">
+                <strong> 25 </strong>
+
+                <span> NOV </span>
+              </div>
+
+              <div class="informacion-cita">
+                <strong> Stefany Ramires Salas </strong>
+
+                <span> Cardiología · Rocío Ramos Flores </span>
+              </div>
+
+              <div class="hora-cita">15:30</div>
+            </article>
+
+            <article class="cita">
+              <div class="fecha-cita">
+                <strong> 26 </strong>
+
+                <span> NOV </span>
+              </div>
+
+              <div class="informacion-cita">
+                <strong> María Torres García </strong>
+
+                <span> Oftalmología · Jorge Pérez Castillo </span>
+              </div>
+
+              <div class="hora-cita">09:30</div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

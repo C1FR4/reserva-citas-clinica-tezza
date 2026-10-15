@@ -1,0 +1,771 @@
+/* =========================
+   CONFIGURACIÓN GENERAL
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    background-color: #f4f7fb;
+
+    color: #18324b;
+
+    min-height: 100vh;
+
+}
+
+
+/* =========================
+   ENCABEZADO
+========================= */
+
+.header {
+
+    width: 92%;
+
+    max-width: 1250px;
+
+    margin: 20px auto;
+
+    padding: 15px 25px;
+
+    background-color: white;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.06);
+
+}
+
+
+/* LOGO */
+
+.logo {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.logo span {
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+    color: #123b67;
+
+}
+
+
+.logo small {
+
+    font-size: 10px;
+
+    color: #7b8b9b;
+
+}
+
+
+/* MENÚ */
+
+.menu {
+
+    display: flex;
+
+    gap: 35px;
+
+}
+
+
+.menu a {
+
+    text-decoration: none;
+
+    color: #526579;
+
+    font-size: 14px;
+
+    transition: 0.3s;
+
+}
+
+
+.menu a:hover {
+
+    color: #2f80ed;
+
+}
+
+
+/* USUARIO */
+
+.usuario {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 14px;
+
+}
+
+
+.avatar {
+
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 50%;
+
+    background-color: #dcecff;
+
+    color: #2f80ed;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-weight: bold;
+
+}
+
+
+/* =========================
+   CONTENEDOR
+========================= */
+
+.contenedor {
+
+    width: 92%;
+
+    max-width: 1100px;
+
+    margin: 40px auto;
+
+}
+
+
+/* =========================
+   VOLVER
+========================= */
+
+.volver {
+
+    display: inline-block;
+
+    margin-bottom: 30px;
+
+    color: #526579;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition: 0.3s;
+
+}
+
+
+.volver:hover {
+
+    color: #2f80ed;
+
+}
+
+
+/* =========================
+   TÍTULO
+========================= */
+
+.titulo-pagina {
+
+    margin-bottom: 35px;
+
+}
+
+
+.etiqueta {
+
+    color: #2f80ed;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.titulo-pagina h1 {
+
+    font-size: 34px;
+
+    margin: 10px 0 8px;
+
+    color: #18324b;
+
+}
+
+
+.titulo-pagina p {
+
+    color: #718096;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================
+   CONTENIDO RESERVA
+========================= */
+
+.contenido-reserva {
+
+    display: grid;
+
+    grid-template-columns:
+        0.9fr 1.4fr;
+
+    gap: 25px;
+
+    margin-bottom: 25px;
+
+}
+
+
+/* =========================
+   TARJETA DOCTOR
+========================= */
+
+.doctor-card {
+
+    background-color: #123b67;
+
+    color: white;
+
+    border-radius: 20px;
+
+    padding: 30px;
+
+    min-height: 350px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+}
+
+
+.doctor-imagen {
+
+    width: 90px;
+
+    height: 90px;
+
+    border-radius: 50%;
+
+    background-color: #e3f0ff;
+
+    color: #2f80ed;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+    margin-bottom: 30px;
+
+}
+
+
+.doctor-informacion .etiqueta {
+
+    color: #a9d4ff;
+
+}
+
+
+.doctor-informacion h2 {
+
+    font-size: 25px;
+
+    line-height: 1.25;
+
+    margin: 10px 0 7px;
+
+}
+
+
+.especialidad {
+
+    color: #b9d4eb;
+
+    font-size: 15px;
+
+    margin-bottom: 30px;
+
+}
+
+
+/* DETALLE DEL MÉDICO */
+
+.doctor-detalle {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+
+}
+
+
+.doctor-detalle .icono {
+
+    width: 35px;
+
+    height: 35px;
+
+    border-radius: 10px;
+
+    background-color: rgba(255, 255, 255, 0.12);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    color: #9ed1ff;
+
+}
+
+
+.doctor-detalle strong {
+
+    display: block;
+
+    font-size: 13px;
+
+}
+
+
+.doctor-detalle p {
+
+    color: #b9d4eb;
+
+    font-size: 11px;
+
+    margin-top: 4px;
+
+}
+
+
+/* =========================
+   TARJETA DE CITA
+========================= */
+
+.cita-card {
+
+    background-color: white;
+
+    border-radius: 20px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.05);
+
+}
+
+
+/* CABECERA */
+
+.card-titulo {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+.card-titulo h2 {
+
+    font-size: 21px;
+
+    margin-top: 7px;
+
+}
+
+
+/* ESTADO */
+
+.estado {
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    background-color: #f2f2c4;
+
+    color: #f8c140;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+}
+
+
+/* =========================
+   DATOS DE CITA
+========================= */
+
+.dato-cita {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 15px 0;
+
+    border-bottom: 1px solid #edf1f5;
+
+}
+
+
+.dato-cita:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.dato-icono {
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 11px;
+
+    background-color: #eaf3ff;
+
+    color: #2f80ed;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+}
+
+
+.dato-cita span {
+
+    display: block;
+
+    color: #8a99a8;
+
+    font-size: 11px;
+
+    margin-bottom: 4px;
+
+}
+
+
+.dato-cita strong {
+
+    font-size: 14px;
+
+    color: #18324b;
+
+}
+
+
+/* =========================
+   DATOS DEL PACIENTE
+========================= */
+
+.paciente-card {
+
+    background-color: white;
+
+    border-radius: 20px;
+
+    padding: 30px;
+
+    margin-bottom: 25px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.05);
+
+}
+
+
+.datos-paciente {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 20px;
+
+}
+
+
+.campo {
+
+    background-color: #f7f9fc;
+
+    border-radius: 10px;
+
+    padding: 15px;
+
+}
+
+
+.campo span {
+
+    display: block;
+
+    color: #8a99a8;
+
+    font-size: 11px;
+
+    margin-bottom: 7px;
+
+}
+
+
+.campo strong {
+
+    color: #18324b;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================
+   ACCIONES
+========================= */
+
+.acciones {
+
+    background-color: white;
+
+    border-radius: 20px;
+
+    padding: 25px 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    border: 1px solid #e8edf3;
+
+}
+
+
+.acciones h3 {
+
+    font-size: 16px;
+
+    margin-bottom: 5px;
+
+}
+
+
+.acciones p {
+
+    color: #718096;
+
+    font-size: 12px;
+
+}
+
+
+/* BOTÓN CANCELAR */
+
+.btn-cancelar {
+
+    border: 1px solid #e3a0a0;
+
+    background-color: #fff7f7;
+
+    color: #c24141;
+
+    padding: 12px 20px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition: 0.3s;
+
+}
+
+
+
+.btn-cancelar:hover {
+
+    background-color: #c24141;
+
+    color: white;
+
+}
+
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+
+    background-color: #123b67;
+
+    color: white;
+
+    padding: 25px;
+
+    display: flex;
+
+    justify-content: space-around;
+
+    font-size: 13px;
+
+    margin-top: 60px;
+
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 850px) {
+
+    .contenido-reserva {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .header {
+
+        flex-direction: column;
+
+        gap: 20px;
+
+    }
+
+
+    .menu {
+
+        gap: 15px;
+
+    }
+
+
+    .contenedor {
+
+        width: 94%;
+
+    }
+
+
+    .titulo-pagina h1 {
+
+        font-size: 27px;
+
+    }
+
+
+    .datos-paciente {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .acciones {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .btn-cancelar {
+
+        width: 100%;
+
+    }
+
+}

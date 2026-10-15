@@ -1,0 +1,14 @@
+# Archivos comprimidos y respaldos
+*.zip
+*.rar
+*.tar.gz
+*.7z
+
+# Archivos del sistema y del editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log

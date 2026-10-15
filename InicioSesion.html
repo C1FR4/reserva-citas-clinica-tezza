@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Inicio de Sesión | Clínica Tezza</title>
+
+    <link rel="stylesheet" href="iniciosesion.css" />
+  </head>
+
+  <body>
+    <main class="contenedor-login">
+      <!-- INFORMACIÓN -->
+      <section class="login-info">
+        <div class="logo-login">CLÍNICA TEZZA</div>
+
+        <div class="texto-login">
+          <span> CLÍNICA PADRE LUIS TEZZA </span>
+
+          <h1>
+            Tu salud,
+            <br />
+            nuestra prioridad.
+          </h1>
+
+          <p>
+            Accede a tu cuenta para gestionar tus citas médicas y consultar tu
+            información.
+          </p>
+        </div>
+      </section>
+
+      <!-- FORMULARIO -->
+      <section class="login-formulario">
+        <form>
+          <h2>Bienvenido</h2>
+
+          <p class="subtitulo">Ingresa tus datos para continuar</p>
+
+          <label for="email"> Correo electrónico </label>
+
+          <input type="email" id="email" placeholder="ejemplo@correo.com" />
+
+          <label for="password"> Contraseña </label>
+
+          <input
+            type="password"
+            id="password"
+            placeholder="Ingresa tu contraseña"
+          />
+
+          <a href="#" class="olvidaste"> ¿Olvidaste tu contraseña? </a>
+
+          <button type="submit">
+            <a id="boton-iniciosesion" href="PantallaPrincipal.html">Iniciar sesión</a>
+          </button>
+
+          <p class="registro">
+            ¿No tienes una cuenta?
+            <a href="#"> Regístrate </a>
+          </p>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,216 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f7fb;
+}
+
+
+/* CONTENEDOR */
+
+.contenedor-login {
+
+    min-height: 100vh;
+    display: flex;
+    padding: 25px;
+}
+
+
+/* =========================
+   LADO IZQUIERDO
+========================= */
+
+.login-info {
+
+    width: 55%;
+    border-radius: 30px;
+    background:
+        linear-gradient(135deg,
+            #123b67,
+            #2f80ed);
+
+    color: white;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.logo-login {
+
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.texto-login {
+
+    max-width: 500px;
+}
+
+.texto-login span {
+
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #b9dcff;
+}
+
+.texto-login h1 {
+
+    font-size: 55px;
+    line-height: 1.1;
+    margin: 20px 0;
+}
+
+.texto-login p {
+
+    color: #dbeeff;
+    line-height: 1.7;
+}
+
+
+/* =========================
+   FORMULARIO
+========================= */
+
+.login-formulario {
+
+    width: 45%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+}
+
+.login-formulario form {
+
+    width: 100%;
+    max-width: 420px;
+}
+
+.login-formulario h2 {
+
+    font-size: 35px;
+    color: #18324b;
+    margin-bottom: 8px;
+}
+
+.subtitulo {
+
+    color: #718096;
+    margin-bottom: 35px;
+}
+
+
+/* LABEL */
+
+label {
+
+    display: block;
+    margin-bottom: 8px;
+    color: #34495e;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+/* INPUT */
+
+input {
+
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #d8e0e8;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    outline: none;
+    font-size: 14px;
+}
+
+input:focus {
+
+    border-color: #2f80ed;
+    box-shadow:
+        0 0 0 3px rgba(47, 128, 237, 0.1);
+}
+
+
+/* CONTRASEÑA */
+
+.olvidaste {
+
+    display: block;
+    text-align: right;
+    color: #2f80ed;
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+
+#boton-iniciosesion {
+    text-decoration: none;
+    color: white;
+}
+
+/* BOTÓN */
+
+button {
+
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background-color: #123b67;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+
+    background-color: #2f80ed;
+}
+
+
+/* REGISTRO */
+
+.registro {
+
+    text-align: center;
+    margin-top: 25px;
+    color: #718096;
+    font-size: 14px;
+}
+
+.registro a {
+
+    color: #2f80ed;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 800px) {
+
+    .contenedor-login {
+        padding: 10px;
+    }
+
+    .login-info {
+        display: none;
+    }
+
+    .login-formulario {
+        width: 100%;
+        padding: 30px;
+    }
+
+}

@@ -1,0 +1,555 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f7fb;
+    color: #18324b;
+}
+
+
+
+.header {
+
+    width: 92%;
+    max-width: 1250px;
+    margin: 20px auto;
+    padding: 15px 25px;
+    background-color: white;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow:0 5px 20px rgba(0, 0, 0, 0.06);
+}
+
+
+/* LOGO */
+
+.logo {
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.logo span {
+
+    font-size: 25px;
+    font-weight: bold;
+    color: #123b67;
+}
+
+
+.logo small {
+
+    font-size: 10px;
+    color: #7b8b9b;
+}
+
+
+/* MENÚ */
+
+.menu {
+
+    display: flex;
+    gap: 35px;
+}
+
+
+.menu a {
+
+    text-decoration: none;
+    color: #526579;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+
+.menu a:hover {
+
+    color: #2f80ed;
+}
+
+
+/* USUARIO */
+
+.usuario {
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+
+.avatar {
+
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #dcecff;
+    color: #2f80ed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+
+.contenedor {
+
+    width: 92%;
+    max-width: 1100px;
+    margin: 40px auto;
+}
+
+
+
+.volver {
+
+    display: inline-block;
+    margin-bottom: 25px;
+    color: #526579;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+
+.volver:hover {
+
+    color: #2f80ed;
+}
+
+
+.doctor {
+
+    background-color: white;
+    border-radius: 25px;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 45px;
+    align-items: center;
+    box-shadow:0 5px 25px rgba(0, 0, 0, 0.05);
+}
+
+
+.doctor-imagen {
+
+    display: flex;
+    justify-content: center;
+}
+
+
+.imagen-placeholder {
+
+    width: 240px;
+    height: 280px;
+    border-radius: 20px;
+    background:linear-gradient(145deg, #dcecff, #edf5ff);
+    color: #2f80ed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    font-weight: bold;
+    border: 1px solid #d9e8f8;
+}
+
+
+
+.doctor-informacion {
+
+    padding-right: 20px;
+}
+
+
+.etiqueta {
+
+    color: #2f80ed;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+
+.doctor-informacion h1 {
+
+    font-size: 36px;
+    margin: 10px 0 5px;
+    color: #18324b;
+}
+
+
+.doctor-informacion h2 {
+
+    font-size: 18px;
+    font-weight: normal;
+    color: #718096;
+    margin-bottom: 25px;
+}
+
+
+
+.experiencia {
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background-color: #f5f9ff;
+    border-radius: 12px;
+    width: fit-content;
+}
+
+
+.experiencia .icono {
+
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: #dcecff;
+    color: #2f80ed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.experiencia strong {
+
+    display: block;
+    font-size: 14px;
+    color: #18324b;
+}
+
+
+.experiencia p {
+
+    margin-top: 4px;
+    font-size: 12px;
+}
+
+
+/* SEPARADOR */
+
+.separador {
+
+    width: 100%;
+    height: 1px;
+    background-color: #e7edf3;
+    margin: 25px 0;
+}
+
+
+.doctor-informacion h3 {
+
+    font-size: 17px;
+    margin-bottom: 10px;
+}
+
+
+.descripcion {
+
+    color: #718096;
+    line-height: 1.7;
+    font-size: 14px;
+    max-width: 650px;
+}
+
+
+/* =========================
+   HORARIO
+========================= */
+
+.horario {
+
+    margin-top: 30px;
+    background-color: white;
+    border-radius: 25px;
+    padding: 40px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+}
+
+
+.titulo-seccion {
+
+    margin-bottom: 30px;
+}
+
+
+.titulo-seccion h2 {
+
+    font-size: 28px;
+    margin: 8px 0;
+}
+
+
+.titulo-seccion p {
+
+    color: #718096;
+    font-size: 14px;
+}
+
+
+/* =========================
+   HORARIOS
+========================= */
+
+.horarios-grid {
+
+    display: grid;
+    grid-template-columns:repeat(7, 1fr);
+
+    gap: 10px;
+}
+
+
+/* TARJETA DEL DÍA */
+
+.dia {
+
+    min-height: 140px;
+    padding: 15px 10px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+
+/* DÍA DISPONIBLE */
+
+.dia.disponible {
+
+    background-color: #f1f8ff;
+    border: 1px solid #dcecff;
+}
+
+
+/* DÍA NO DISPONIBLE */
+
+.dia.no-disponible {
+
+    background-color: #f7f8fa;
+    border: 1px solid #e9edf1;
+    opacity: 0.75;
+}
+
+
+/* NOMBRE DEL DÍA */
+
+.dia-nombre {
+
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #18324b;
+}
+
+
+/* HORARIO */
+
+.hora {
+
+    font-size: 11px;
+    color: #2f80ed;
+    font-weight: bold;
+}
+
+
+.separador-hora {
+
+    font-size: 10px;
+    color: #718096;
+    margin: 3px 0;
+}
+
+
+/* NO DISPONIBLE */
+
+.estado {
+
+    font-size: 10px;
+    color: #9aa8b6;
+    line-height: 1.4;
+}
+
+
+/* =========================
+   RESERVAR
+========================= */
+
+.reservar {
+
+    margin-top: 30px;
+    padding: 25px;
+    border-radius: 15px;
+    background:
+        linear-gradient(100deg,#eef6ff, #f7fbff);
+
+    border: 1px solid #dcecff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+
+.reservar h3 {
+
+    font-size: 17px;
+    margin-bottom: 5px;
+}
+
+
+.reservar p {
+
+    color: #718096;
+    font-size: 13px;
+}
+
+
+/* BOTÓN */
+
+.btn-reservar {
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    background-color: #123b67;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+    transition: 0.3s;
+}
+
+
+.btn-reservar:hover {
+
+    background-color: #2f80ed;
+    transform: translateY(-2px);
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+
+    background-color: #123b67;
+    color: white;
+    padding: 25px;
+    display: flex;
+    justify-content: space-around;
+    font-size: 13px;
+    margin-top: 60px;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 950px) {
+
+    .horarios-grid {
+
+        grid-template-columns:
+            repeat(4, 1fr);
+    }
+
+}
+
+
+@media (max-width: 750px) {
+
+    .header {
+
+        flex-direction: column;
+        gap: 20px;
+    }
+
+
+    .doctor {
+
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+
+    .doctor-informacion {
+
+        padding-right: 0;
+    }
+
+
+    .experiencia {
+
+        margin: auto;
+    }
+
+
+    .horarios-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+
+    .reservar {
+
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .contenedor {
+
+        width: 95%;
+    }
+
+
+    .doctor,
+    .horario {
+
+        padding: 25px;
+    }
+
+
+    .doctor-informacion h1 {
+
+        font-size: 28px;
+    }
+
+
+    .menu {
+
+        gap: 15px;
+    }
+
+
+    .menu a {
+
+        font-size: 12px;
+    }
+
+}

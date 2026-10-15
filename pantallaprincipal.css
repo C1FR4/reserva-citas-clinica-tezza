@@ -1,0 +1,541 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f7fb;
+    color: #18324b;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.header-dashboard {
+
+    height: 75px;
+    background-color: white;
+    padding: 0 35px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e5eaf0;
+}
+
+
+.logo {
+
+    font-size: 25px;
+    font-weight: bold;
+    color: #123b67;
+}
+
+
+.menu-dashboard {
+
+    display: flex;
+    gap: 35px;
+}
+
+
+.menu-dashboard a {
+
+    text-decoration: none;
+    color: #66788a;
+    font-size: 14px;
+}
+
+
+.menu-dashboard a:hover {
+
+    color: #2f80ed;
+}
+
+
+/* USUARIO */
+
+.usuario-header {
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.avatar {
+
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #dcecff;
+    color: #2f80ed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+
+/* =========================
+   LAYOUT
+========================= */
+
+.layout-dashboard {
+
+    display: flex;
+    min-height: calc(100vh - 75px);
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+
+    width: 240px;
+    background-color: #123b67;
+    color: white;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.sidebar-titulo {
+
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #9bb8d4;
+    margin-bottom: 20px;
+    padding-left: 12px;
+}
+
+
+.sidebar-menu {
+
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+
+.sidebar-menu a {
+
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 13px;
+    border-radius: 10px;
+    color: #d6e5f3;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+
+.sidebar-menu a:hover {
+
+    background-color: #1d4d7d;
+}
+
+
+.sidebar-menu a.activo {
+
+    background-color: #2f80ed;
+    color: white;
+}
+
+
+.icono-sidebar {
+
+    width: 25px;
+    text-align: center;
+    font-size: 18px;
+}
+
+
+/* USUARIO SIDEBAR */
+
+.sidebar-usuario {
+
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.sidebar-usuario strong {
+
+    display: block;
+    font-size: 14px;
+}
+
+
+.sidebar-usuario small {
+
+    color: #9bb8d4;
+    font-size: 11px;
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard {
+
+    flex: 1;
+    padding: 40px;
+    max-width: 1400px;
+    margin: auto;
+}
+
+
+/* BIENVENIDA */
+
+.bienvenida {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 35px;
+}
+
+
+.bienvenida span {
+
+    color: #2f80ed;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+
+.bienvenida h1 {
+
+    font-size: 34px;
+    margin: 7px 0;
+}
+
+
+.bienvenida p {
+
+    color: #718096;
+}
+
+
+.btn-cita {
+
+    text-decoration: none;
+    background-color: #123b67;
+    color: white;
+    padding: 13px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+
+/* =========================
+   ESTADÍSTICAS
+========================= */
+
+.estadisticas {
+
+    display: grid;
+    grid-template-columns:
+        repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+
+.estadistica {
+
+    background-color: white;
+    padding: 25px;
+    border-radius: 15px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+
+.estadistica-icono {
+
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    background-color: #eaf3ff;
+    color: #2f80ed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+}
+
+
+.estadistica p {
+
+    color: #718096;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+
+.estadistica h2 {
+
+    font-size: 23px;
+    margin-bottom: 3px;
+}
+
+
+.estadistica small {
+
+    color: #9aa8b6;
+    font-size: 11px;
+}
+
+
+/* =========================
+   CONTENIDO
+========================= */
+
+.contenido-dashboard {
+
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+
+.panel {
+
+    background-color: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+
+/* HEADER PANEL */
+
+.panel-header {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+
+.panel-header h2,
+.acciones h2 {
+
+    font-size: 19px;
+    margin-bottom: 5px;
+}
+
+
+.panel-header p,
+.acciones>p {
+
+    color: #718096;
+    font-size: 13px;
+}
+
+
+.panel-header a {
+
+    color: #2f80ed;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+
+/* =========================
+   CITAS
+========================= */
+
+.cita {
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 17px 0;
+    border-top: 1px solid #edf1f5;
+}
+
+
+.fecha {
+
+    width: 55px;
+    height: 55px;
+    background-color: #eaf3ff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #2f80ed;
+}
+
+
+.fecha strong {
+
+    font-size: 18px;
+}
+
+
+.fecha span {
+
+    font-size: 9px;
+    font-weight: bold;
+}
+
+
+.datos-cita {
+
+    flex: 1;
+}
+
+
+.datos-cita h3 {
+
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+
+.datos-cita p {
+
+    font-size: 12px;
+    color: #718096;
+    margin-bottom: 5px;
+}
+
+
+.datos-cita span {
+
+    font-size: 11px;
+    color: #9aa8b6;
+}
+
+
+.estado {
+
+    background-color: #e8f7ee;
+    color: #2b8a52;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+}
+
+
+/* =========================
+   ACCIONES
+========================= */
+
+.acciones {
+
+    height: fit-content;
+}
+
+
+.acciones>p {
+
+    margin-bottom: 20px;
+}
+
+
+.acciones a {
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px;
+    border-radius: 10px;
+    background-color: #f5f8fc;
+    color: #18324b;
+    text-decoration: none;
+    margin-bottom: 10px;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+
+.acciones a:hover {
+
+    background-color: #eaf3ff;
+    color: #2f80ed;
+}
+
+
+.acciones a span {
+
+    color: #2f80ed;
+    font-size: 20px;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+
+        width: 190px;
+    }
+
+    .estadisticas {
+
+        grid-template-columns: 1fr;
+    }
+
+    .contenido-dashboard {
+
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .sidebar {
+
+        display: none;
+    }
+
+    .dashboard {
+
+        padding: 20px;
+    }
+
+    .menu-dashboard {
+
+        display: none;
+    }
+
+    .bienvenida {
+
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+}

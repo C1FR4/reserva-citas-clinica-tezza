@@ -1,0 +1,529 @@
+/* =====================================================
+   CONFIGURACIÓN GENERAL
+===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+
+/* =====================================================
+   ENCABEZADO
+===================================================== */
+
+.header {
+    width: 100%;
+    height: 80px;
+
+    background-color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 60px;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+
+/* Logo */
+
+.logo {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo span {
+    font-size: 22px;
+    font-weight: bold;
+    color: #176b87;
+}
+
+.logo small {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #777;
+}
+
+
+/* Menú */
+
+.menu {
+    display: flex;
+    gap: 35px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: #444;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    transition: 0.3s;
+}
+
+.menu a:hover {
+    color: #176b87;
+}
+
+
+/* Usuario */
+
+.usuario {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-weight: 500;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 50%;
+
+    background-color: #176b87;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+}
+
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+===================================================== */
+
+.contenedor {
+    width: 90%;
+    max-width: 1100px;
+
+    margin: 40px auto 60px;
+}
+
+
+/* =====================================================
+   BOTÓN VOLVER
+===================================================== */
+
+.volver {
+    display: inline-block;
+
+    margin-bottom: 30px;
+
+    text-decoration: none;
+
+    color: #176b87;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    transition: 0.3s;
+}
+
+.volver:hover {
+    color: #0d4f65;
+}
+
+
+/* =====================================================
+   INFORMACIÓN DEL DOCTOR
+===================================================== */
+
+.doctor {
+    background-color: white;
+
+    padding: 30px;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 30px;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+
+    margin-bottom: 30px;
+}
+
+
+/* Imagen */
+
+.doctor-imagen {
+    width: 150px;
+    height: 150px;
+
+    flex-shrink: 0;
+}
+
+.imagen-placeholder {
+    width: 100%;
+    height: 100%;
+
+    border-radius: 10px;
+
+    background-color: #e7f3f7;
+
+    color: #176b87;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+    font-weight: bold;
+}
+
+
+/* Información */
+
+.doctor-informacion {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.etiqueta {
+    display: inline-block;
+
+    width: fit-content;
+
+    padding: 6px 12px;
+
+    border-radius: 20px;
+
+    background-color: #e7f3f7;
+
+    color: #176b87;
+
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.doctor-informacion h1 {
+    font-size: 28px;
+
+    color: #222;
+}
+
+.doctor-informacion p {
+    font-size: 16px;
+
+    color: #777;
+}
+
+
+/* =====================================================
+   FORMULARIO
+===================================================== */
+
+.formulario {
+    background-color: white;
+
+    padding: 35px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+.formulario h2 {
+    margin-bottom: 30px;
+
+    font-size: 24px;
+
+    color: #222;
+}
+
+
+/* =====================================================
+   CAMPOS DEL FORMULARIO
+===================================================== */
+
+.campo {
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: 22px;
+}
+
+.campo label {
+    margin-bottom: 8px;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    color: #444;
+}
+
+.campo input {
+    width: 100%;
+
+    padding: 13px 15px;
+
+    border: 1px solid #d5d9dd;
+
+    border-radius: 7px;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: 0.3s;
+}
+
+
+/* Cuando el usuario selecciona el campo */
+
+.campo input:focus {
+    border-color: #176b87;
+
+    box-shadow: 0 0 0 3px rgba(23, 107, 135, 0.1);
+}
+
+
+/* =====================================================
+   HORARIOS
+===================================================== */
+
+.horarios {
+    margin-top: 30px;
+}
+
+.horarios h3 {
+    margin-bottom: 8px;
+
+    font-size: 18px;
+
+    color: #222;
+}
+
+.horarios p {
+    margin-bottom: 18px;
+
+    font-size: 14px;
+
+    color: #777;
+}
+
+
+/* Contenedor de horarios */
+
+.horarios-opciones {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+}
+
+
+/* Ocultamos el radio original */
+
+.horario input {
+    display: none;
+}
+
+
+/* Botón del horario */
+
+.horario span {
+    display: block;
+
+    padding: 12px 20px;
+
+    border: 1px solid #cfd6dc;
+
+    border-radius: 8px;
+
+    background-color: white;
+
+    color: #444;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+
+/* Hover */
+
+.horario span:hover {
+    border-color: #176b87;
+
+    color: #176b87;
+
+    background-color: #f0f8fa;
+}
+
+
+/* Horario seleccionado */
+
+.horario input:checked+span {
+    background-color: #176b87;
+
+    border-color: #176b87;
+
+    color: white;
+
+    font-weight: bold;
+}
+
+
+/* =====================================================
+   BOTÓN RESERVAR
+===================================================== */
+
+.btn-reservar {
+    width: 100%;
+
+    margin-top: 35px;
+
+    padding: 15px 20px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background-color: #176b87;
+
+    color: white;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    transition: 0.3s;
+}
+
+
+/* Hover */
+
+.btn-reservar:hover {
+    background-color: #0d4f65;
+
+    transform: translateY(-1px);
+}
+
+
+/* Flecha */
+
+.btn-reservar span {
+    font-size: 20px;
+
+}
+
+
+
+
+
+/* =====================================================
+   PIE DE PÁGINA
+===================================================== */
+
+.footer {
+    width: 100%;
+
+    background-color: #123f4d;
+
+    color: white;
+
+    padding: 25px;
+
+    text-align: center;
+}
+
+.footer p {
+    margin: 5px 0;
+
+    font-size: 13px;
+}
+
+.footer p:first-child {
+    font-weight: bold;
+}
+
+
+/* =====================================================
+   DISEÑO RESPONSIVO
+===================================================== */
+
+@media (max-width: 768px) {
+
+    /* Encabezado */
+
+    .header {
+        height: auto;
+
+        padding: 20px;
+
+        flex-direction: column;
+
+        gap: 20px;
+    }
+
+
+    /* Menú */
+
+    .menu {
+        gap: 20px;
+
+        flex-wrap: wrap;
+
+        justify-content: center;
+    }
+
+
+    /* Doctor */
+
+    .doctor {
+        flex-direction: column;
+
+        text-align: center;
+    }
+
+
+    .doctor-informacion {
+        align-items: center;
+    }
+
+
+    /* Formulario */
+
+    .formulario {
+        padding: 25px;
+    }
+
+
+    /* Horarios */
+
+    .horarios-opciones {
+        justify-content: center;
+    }
+
+}
