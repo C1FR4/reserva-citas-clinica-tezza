@@ -32,5 +32,19 @@ public class WebConfig implements WebMvcConfigurer {
             }
         }).addPathPatterns("/PantallaPrincipal.html", "/ReservarCita.html",
                 "/MisCitas.html", "/Especialista.html");
+
+        registry.addInterceptor(new HandlerInterceptor() {
+            @Override
+            public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
+                                     Object handler) throws Exception {
+                var session = request.getSession(false);
+                if (session != null && "ADMINISTRADOR".equals(session.getAttribute("rol"))) {
+                    response.setHeader("Cache-Control", "no-store");
+                    return true;
+                }
+                response.sendRedirect("/InicioSesion.html");
+                return false;
+            }
+        }).addPathPatterns("/admin", "/admin/**");
     }
 }

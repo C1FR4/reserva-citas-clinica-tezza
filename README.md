@@ -2,7 +2,9 @@
 
 ## Estado de la rama C1FR4
 
-Esta rama integra el proyecto Spring Boot iniciado por una compañera con las pantallas HTML/CSS existentes. Ya funciona el acceso de pacientes con contraseña BCrypt y sesión HTTP, además de la consulta, reserva y cancelación de citas vinculadas a MySQL. El panel y la página de especialistas muestran datos reales. También se conserva el panel administrativo inicial para registrar médicos, ajustado a los campos obligatorios del esquema.
+Esta rama integra el proyecto Spring Boot iniciado por una compañera con las pantallas HTML/CSS existentes. Ya funciona el acceso de pacientes con contraseña BCrypt y sesión HTTP, además de la consulta, reserva y cancelación de citas vinculadas a MySQL. El panel y la página de especialistas muestran datos reales. El panel administrativo cubre la consulta de citas, la gestión de perfiles médicos y la asignación de horarios.
+
+El acceso de `admin` utiliza el mismo formulario de inicio de sesión y abre `/admin`. El panel administrativo permite consultar citas de toda la clínica, registrar y editar perfiles médicos, cambiar su estado, y asignar o retirar horarios. El alta de un médico en este panel no crea otra cuenta: así las dos cuentas de demostración siguen siendo `usuariotest` y `admin`. Los horarios con citas asociadas no se pueden retirar, y un médico con citas futuras no se puede desactivar hasta resolverlas.
 
 ## Estructura del proyecto
 
@@ -47,7 +49,7 @@ Para comprobar la conexión, el inicio de Spring valida las entidades contra el 
 
 ## Crear un paciente de prueba
 
-Después de ejecutar el DDL, puedes iniciar una vez el perfil `seed`. Inserta `usuariotest` como paciente y `admin` como administrador, además de un médico con horarios de lunes a viernes de 08:00 a 13:00 si aún no existen. El médico de demostración comparte la fila `admin` en `usuario` para conservar la clave foránea obligatoria del DDL sin crear una tercera cuenta de prueba. Ambas contraseñas se cifran con BCrypt. Usa un DNI de prueba de ocho dígitos que no esté repetido.
+Después de ejecutar el DDL, puedes iniciar una vez el perfil `seed`. Inserta `usuariotest` como paciente y `admin` como administrador, además de un médico con horarios de lunes a viernes de 08:00 a 13:00 si aún no existen. Antes de aplicar la migración de médicos sin cuenta, el médico de demostración comparte la fila `admin` en `usuario` para respetar el DDL original; después, los nuevos perfiles médicos no requieren usuario propio. Ambas contraseñas se cifran con BCrypt. Usa un DNI de prueba de ocho dígitos que no esté repetido.
 
 ```powershell
 $env:SEED_EMAIL = 'usuariotest'
@@ -90,5 +92,5 @@ Pruebas automáticas del controlador:
 ## Alcance pendiente
 
 - La reserva usa espacios de 30 minutos dentro de los rangos de `horario`. El DDL impide que dos citas activas ocupen el mismo espacio del médico o del paciente.
-- El alta de médicos heredada de la compañera se ha ajustado al DDL y al cifrado, pero falta comprobarla frente a una instancia MySQL real.
+- El panel administrativo gestiona perfiles médicos sin cuentas adicionales; la cuenta y la pantalla del rol médico corresponden a un avance posterior.
 - La integración con MySQL 8.4.11 se verificó localmente el 21/10/2026 con el DDL de siete tablas: arranque con `ddl-auto=validate`, creación de un paciente de prueba, login, lectura del panel y cierre de sesión. En otra máquina se debe configurar su propia instancia MySQL y las variables `DB_*`.

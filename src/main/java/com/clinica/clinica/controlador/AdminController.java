@@ -1,12 +1,7 @@
-
 package com.clinica.clinica.controlador;
 
-import com.clinica.clinica.modelo.Medico;
-import com.clinica.clinica.servicio.MedicoService;
-import com.clinica.clinica.repositorio.MedicoRepository;
-
+import com.clinica.clinica.servicio.AdminService;
 import jakarta.servlet.http.HttpSession;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,93 +11,79 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AdminController {
+    private final AdminService admin;
 
-    private final MedicoRepository medicoRepository;
-    private final MedicoService medicoService;
-
-    public AdminController(
-            MedicoRepository medicoRepository,
-            MedicoService medicoService) {
-
-        this.medicoRepository = medicoRepository;
-        this.medicoService = medicoService;
+    public AdminController(AdminService admin) {
+        this.admin = admin;
     }
 
-    // Mostrar el panel de administración
     @GetMapping("/admin")
-    public String mostrarPanel(Model model, HttpSession session) {
-
-        if (!"ADMINISTRADOR".equals(session.getAttribute("rol"))) {
-            return "redirect:/InicioSesion.html";
-        }
-
-        model.addAttribute("medicos", medicoRepository.findAll());
-
-        if (!model.containsAttribute("medicoForm")) {
-            model.addAttribute("medicoForm", new Medico());
-        }
-
+    public String panel(@RequestParam(required = false) Integer medico, Model model,
+                        HttpSession session) {
+        if (!esAdministrador(session)) return "redirect:/InicioSesion.html";
+        var medicos = admin.medicos();
+        var horarios = admin.horarios();
+        model.addAttribute("medicos", medicos);
+        model.addAttribute("horarios", horarios);
+        model.addAttribute("citas", admin.citas());
+        model.addAttribute("totalMedicos", medicos.size());
+        model.addAttribute("totalHorarios", horarios.size());
+        model.addAttribute("totalCitas", admin.totalCitas());
+        if (medico != null) model.addAttribute("medicoEditar", admin.medico(medico));
         return "admin";
     }
 
-    // Registrar un médico y su cuenta de acceso
     @PostMapping("/admin/medicos/guardar")
-    public String guardarMedico(
-            @RequestParam String nombre,
-            @RequestParam String apellido,
-            @RequestParam String especialidad,
-            @RequestParam String telefono,
-            @RequestParam String dni,
-            @RequestParam String correo,
-            @RequestParam String nombreUsuario,
-            @RequestParam String contrasena,
-            RedirectAttributes redirectAttributes,
-            HttpSession session) {
-
-        // Comprobar que haya iniciado sesión un administrador
-        if (!"ADMINISTRADOR".equals(session.getAttribute("rol"))) {
-            return "redirect:/InicioSesion.html";
-        }
-
+    public String guardarMedico(@RequestParam(required = false) Integer idMedico,
+                                @RequestParam String nombre,
+                                @RequestParam String apellido,
+                                @RequestParam String dni,
+                                @RequestParam String correo,
+                                @RequestParam String especialidad,
+                                @RequestParam(required = false) String telefono,
+                                @RequestParam(defaultValue = "ACTIVO") String estado,
+                                RedirectAttributes mensajes, HttpSession session) {
+        if (!esAdministrador(session)) return "redirect:/InicioSesion.html";
         try {
-            Medico medico = new Medico();
-
-            medico.setNombre(nombre);
-            medico.setApellido(apellido);
-            medico.setEspecialidad(especialidad);
-            medico.setTelefono(telefono);
-            medico.setDni(dni);
-            medico.setCorreo(correo);
-            medico.setAniosExperiencia((short) 0);
-            medico.setEstado("ACTIVO");
-
-            medicoService.registrarMedico(
-                    medico,
-                    nombreUsuario,
-                    contrasena);
-
-            redirectAttributes.addFlashAttribute(
-                    "mensajeExito",
-                    "Médico registrado correctamente.");
-
-            redirectAttributes.addFlashAttribute(
-                    "usuarioCreado",
-                    nombreUsuario);
-
-        } catch (IllegalArgumentException e) {
-
-            redirectAttributes.addFlashAttribute(
-                    "mensajeError",
-                    e.getMessage());
-
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-
-            redirectAttributes.addFlashAttribute(
-                    "mensajeError",
-                    "No se pudo registrar el médico. Comprueba que el DNI "
-                            + "y el nombre de usuario no estén repetidos.");
+            admin.guardarMedico(idMedico, nombre, apellido, dni, correo, especialidad,
+                    telefono, estado);
+            mensajes.addFlashAttribute("mensajeExito", idMedico == null
+                    ? "Médico registrado. Ahora puedes asignarle horarios."
+                    : "Datos del médico actualizados.");
+        } catch (IllegalArgumentException error) {
+            mensajes.addFlashAttribute("mensajeError", error.getMessage());
         }
-
         return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/horarios/guardar")
+    public String agregarHorario(@RequestParam int idMedico, @RequestParam String dia,
+                                 @RequestParam String horaInicio, @RequestParam String horaFin,
+                                 RedirectAttributes mensajes, HttpSession session) {
+        if (!esAdministrador(session)) return "redirect:/InicioSesion.html";
+        try {
+            admin.agregarHorario(idMedico, dia, horaInicio, horaFin);
+            mensajes.addFlashAttribute("mensajeExito", "Horario asignado correctamente.");
+        } catch (IllegalArgumentException error) {
+            mensajes.addFlashAttribute("mensajeError", error.getMessage());
+        }
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/horarios/quitar")
+    public String quitarHorario(@RequestParam int idHorario, RedirectAttributes mensajes,
+                                HttpSession session) {
+        if (!esAdministrador(session)) return "redirect:/InicioSesion.html";
+        try {
+            admin.quitarHorario(idHorario);
+            mensajes.addFlashAttribute("mensajeExito", "Horario retirado.");
+        } catch (IllegalArgumentException error) {
+            mensajes.addFlashAttribute("mensajeError", error.getMessage());
+        }
+        return "redirect:/admin";
+    }
+
+    private boolean esAdministrador(HttpSession session) {
+        return "ADMINISTRADOR".equals(session.getAttribute("rol"));
     }
 }
