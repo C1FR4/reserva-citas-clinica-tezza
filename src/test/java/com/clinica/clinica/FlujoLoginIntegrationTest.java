@@ -1,7 +1,11 @@
 package com.clinica.clinica;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,6 +58,9 @@ class FlujoLoginIntegrationTest {
         mvc.perform(get("/PantallaPrincipal.html"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/InicioSesion.html"));
+        mvc.perform(get("/Especialista.html"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/InicioSesion.html"));
         mvc.perform(get("/admin"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/InicioSesion.html"));
@@ -70,6 +77,16 @@ class FlujoLoginIntegrationTest {
                 .andExpect(jsonPath("$.nombre").value("Ana"));
         mvc.perform(get("/PantallaPrincipal.html").session(session))
                 .andExpect(status().isOk());
+        mvc.perform(get("/ReservarCita.html").session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Especialista.html?v=3")));
+        mvc.perform(get("/Especialista.html").session(session))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Cache-Control", "no-store"))
+                .andExpect(content().string(not(containsString("Cielo"))));
+        mvc.perform(get("/Medico.html").session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/Especialista.html?v=3"));
         mvc.perform(post("/api/auth/logout").session(session))
                 .andExpect(status().isNoContent());
         mvc.perform(get("/api/auth/me").session(session))

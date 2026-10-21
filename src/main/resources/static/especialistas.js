@@ -31,6 +31,7 @@ async function iniciarEspecialistas() {
   for (const medico of medicos) {
     const tarjeta = document.createElement('article');
     tarjeta.className = 'especialista-card';
+    tarjeta.style.cursor = 'pointer';
     const datos = document.createElement('div');
     const titulo = document.createElement('h3');
     titulo.textContent = medico.nombre;
@@ -40,6 +41,11 @@ async function iniciarEspecialistas() {
     const reservar = document.createElement('a');
     reservar.href = `ReservarCita.html?medico=${encodeURIComponent(medico.idMedico)}`;
     reservar.textContent = 'Reservar cita';
+    tarjeta.addEventListener('click', (e) => {
+      if (e.target !== reservar) {
+        window.location.href = reservar.href;
+      }
+    });
     tarjeta.append(datos, reservar);
     lista.append(tarjeta);
   }

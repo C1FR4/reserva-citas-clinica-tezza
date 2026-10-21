@@ -4,6 +4,12 @@
 
 Esta rama integra el proyecto Spring Boot iniciado por una compañera con las pantallas HTML/CSS existentes. Ya funciona el acceso de pacientes con contraseña BCrypt y sesión HTTP, además de la consulta, reserva y cancelación de citas vinculadas a MySQL. El panel y la página de especialistas muestran datos reales. También se conserva el panel administrativo inicial para registrar médicos, ajustado a los campos obligatorios del esquema.
 
+## Estructura del proyecto
+
+La base Maven se generó con Spring Initializr para Java 21 y Spring Boot 4.1.1. El código de la aplicación está en `src/main/java/com/clinica/clinica`, las pantallas y sus recursos en `src/main/resources/static`, la vista administrativa Thymeleaf en `src/main/resources/templates`, y las pruebas en `src/test/java`. Las antiguas maquetas con nombres y médicos ficticios se conservan en `legacy/`, fuera del sitio servido por Spring.
+
+Las cinco dependencias principales son Spring Web MVC, Spring Data JPA, Thymeleaf, Validation y MySQL Driver. `spring-security-crypto` permite verificar contraseñas BCrypt sin activar una segunda pantalla de login. H2 y los módulos de pruebas de Spring solo se usan al ejecutar tests. Data JPA ya incluye JDBC y el pool de conexiones, por lo que no hace falta agregar otro conector MySQL.
+
 El archivo `database/schema.sql` es una copia **idéntica** del DDL validado en el informe APF3. El archivo `script-prueba-incompleto.sql` recibido con el avance de la compañera no se ejecuta: define solo dos tablas, usa nombres/rol distintos y guarda una contraseña sin cifrar.
 
 ## Requisitos
@@ -62,7 +68,7 @@ Cuando termine el perfil `seed`, detén el servidor y vuelve a iniciarlo sin ese
 3. Cierra sesión y prueba abrir directamente `http://localhost:8080/PantallaPrincipal.html`: debe volver al login.
 4. Una clave incorrecta debe mostrar un error y no abrir el panel.
 5. En el panel, abre **Reservar cita**, elige una fecha laboral y uno de los espacios disponibles. La reserva debe aparecer en **Mis citas** y en el panel. Desde **Mis citas** puedes cancelar una reserva futura.
-6. En **Especialistas**, comprueba que el listado provenga de MySQL. El botón del médico debe abrir **Reservar cita** con ese especialista seleccionado.
+6. En **Especialistas**, comprueba que el listado provenga de MySQL. El botón del médico debe abrir **Reservar cita** con ese especialista seleccionado. Desde la reserva, vuelve a **Especialistas** y comprueba que el enlace de **Mis citas** siga funcionando y que el nombre del paciente sea correcto.
 
 Pruebas automáticas del controlador:
 
