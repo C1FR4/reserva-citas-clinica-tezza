@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reservar cita | Clínica Tezza</title>
-    <link rel="stylesheet" href="reservacita.css?v=2" />
+    <link rel="stylesheet" href="reservacita.css?v=3" />
   </head>
   <body>
     <header class="header">
@@ -26,11 +26,11 @@
     <main class="contenedor">
       <a href="PantallaPrincipal.html" class="volver">← Volver al panel</a>
       <section class="doctor">
-        <div class="doctor-imagen"><div class="imagen-placeholder">+</div></div>
+        <div class="doctor-imagen"><img src="images/profesional-salud.svg" alt="Ilustración de un profesional de salud" /></div>
         <div class="doctor-informacion">
           <span class="etiqueta">NUEVA CITA</span>
           <h1>Elige un especialista y horario</h1>
-          <p>Los espacios disponibles se actualizan al elegir la fecha.</p>
+          <p id="doctor-description">Selecciona un especialista para consultar sus días y horas de atención.</p>
         </div>
       </section>
 
@@ -45,6 +45,7 @@
         <div class="campo">
           <label for="fecha">Fecha de la cita</label>
           <input type="date" id="fecha" name="fecha" required />
+          <small class="field-help">Selecciona una fecha desde hoy; los horarios dependen del especialista.</small>
         </div>
         <div class="campo">
           <label for="tipoConsulta">Tipo de consulta</label>
@@ -62,6 +63,12 @@
           <p id="slots-message">Elige especialista y fecha para ver horarios.</p>
           <div class="horarios-opciones" id="horarios-opciones"></div>
         </div>
+        <section class="resumen-reserva" id="resumen-reserva" aria-live="polite" hidden>
+          <h3>Revisa los detalles de tu cita</h3>
+          <p id="resumen-medico"></p>
+          <p id="resumen-fecha"></p>
+          <p id="resumen-tipo"></p>
+        </section>
         <p class="form-message" id="booking-message" role="alert" hidden></p>
         <button type="submit" class="btn-reservar" id="booking-button" disabled>
           Confirmar reserva <span>→</span>
@@ -73,6 +80,6 @@
       <p>© 2026 Clínica Padre Luis Tezza</p>
       <p>Atención médica y bienestar</p>
     </footer>
-    <script src="reservar.js" defer></script>
+    <script src="reservar.js?v=3" defer></script>
   </body>
 </html>

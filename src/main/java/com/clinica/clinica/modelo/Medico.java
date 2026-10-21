@@ -39,8 +39,8 @@ public class Medico {
     @Column(name = "estado", nullable = false, length = 10)
     private String estado = "ACTIVO";
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "id_usuario", nullable = false, unique = true)
+    @OneToOne
+    @JoinColumn(name = "id_usuario", unique = true)
     private Usuario usuario;
 
     // construcor requerido JPA

@@ -6,6 +6,8 @@ async function cerrarSesion() {
   }
 }
 
+const nombresDias = { MIERCOLES: 'miércoles', SABADO: 'sábado' };
+
 async function iniciarEspecialistas() {
   const respuestaSesion = await fetch('/api/auth/me', { credentials: 'same-origin' });
   if (!respuestaSesion.ok) return window.location.replace('/InicioSesion.html');
@@ -32,12 +34,22 @@ async function iniciarEspecialistas() {
     const tarjeta = document.createElement('article');
     tarjeta.className = 'especialista-card';
     tarjeta.style.cursor = 'pointer';
+    const detalle = document.createElement('div');
+    detalle.className = 'especialista-detalle';
+    const imagen = document.createElement('img');
+    imagen.src = 'images/profesional-salud.svg';
+    imagen.alt = 'Ilustración de un profesional de salud';
     const datos = document.createElement('div');
     const titulo = document.createElement('h3');
     titulo.textContent = medico.nombre;
     const especialidad = document.createElement('p');
     especialidad.textContent = medico.especialidad;
-    datos.append(titulo, especialidad);
+    const atencion = document.createElement('p');
+    atencion.className = 'horario-semanal';
+    atencion.textContent = `Atención: ${medico.horarios.map((turno) =>
+      `${nombresDias[turno.dia] || turno.dia.toLowerCase()} ${turno.inicio}–${turno.fin}`).join(', ')}`;
+    datos.append(titulo, especialidad, atencion);
+    detalle.append(imagen, datos);
     const reservar = document.createElement('a');
     reservar.href = `ReservarCita.html?medico=${encodeURIComponent(medico.idMedico)}`;
     reservar.textContent = 'Reservar cita';
@@ -46,7 +58,7 @@ async function iniciarEspecialistas() {
         window.location.href = reservar.href;
       }
     });
-    tarjeta.append(datos, reservar);
+    tarjeta.append(detalle, reservar);
     lista.append(tarjeta);
   }
 }

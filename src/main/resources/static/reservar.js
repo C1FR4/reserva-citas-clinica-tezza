@@ -5,6 +5,11 @@ const horarios = document.querySelector('#horarios-opciones');
 const slotsMessage = document.querySelector('#slots-message');
 const bookingMessage = document.querySelector('#booking-message');
 const button = document.querySelector('#booking-button');
+const resumen = document.querySelector('#resumen-reserva');
+const dias = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
+const nombresDias = { MIERCOLES: 'miércoles', SABADO: 'sábado' };
+let especialistas = [];
+let consultaActual = 0;
 
 function fechaLocal(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -15,12 +20,46 @@ function mostrarError(message) {
   bookingMessage.hidden = !message;
 }
 
+function especialistaActual() {
+  return especialistas.find((opcion) => String(opcion.idMedico) === medico.value);
+}
+
+function actualizarEspecialista() {
+  const seleccionado = especialistaActual();
+  const descripcion = document.querySelector('#doctor-description');
+  if (!seleccionado) {
+    descripcion.textContent = 'Selecciona un especialista para consultar sus días y horas de atención.';
+    return;
+  }
+  const turnos = seleccionado.horarios.map((turno) =>
+    `${nombresDias[turno.dia] || turno.dia.toLowerCase()} ${turno.inicio}–${turno.fin}`);
+  descripcion.textContent = `${seleccionado.nombre} · ${seleccionado.especialidad}. Atención: ${turnos.join(', ')}.`;
+}
+
+function actualizarResumen() {
+  const seleccionado = form.querySelector('input[name="hora"]:checked');
+  const doctor = especialistaActual();
+  resumen.hidden = !(seleccionado && doctor && fecha.value);
+  button.disabled = resumen.hidden;
+  if (resumen.hidden) return;
+  document.querySelector('#resumen-medico').textContent = `${doctor.nombre} · ${doctor.especialidad}`;
+  const fechaLegible = new Date(`${fecha.value}T12:00:00`).toLocaleDateString('es-PE', { dateStyle: 'full' });
+  document.querySelector('#resumen-fecha').textContent = `${fechaLegible} a las ${seleccionado.value}`;
+  const tipo = document.querySelector('#tipoConsulta').selectedOptions[0].textContent;
+  document.querySelector('#resumen-tipo').textContent = `Consulta ${tipo.toLowerCase()}`;
+}
+
 async function cargarHorarios() {
+  const consulta = ++consultaActual;
   horarios.replaceChildren();
-  button.disabled = true;
+  actualizarResumen();
   mostrarError('');
   if (!medico.value || !fecha.value) {
     slotsMessage.textContent = 'Elige especialista y fecha para ver horarios.';
+    return;
+  }
+  if (fecha.value < fechaLocal(new Date())) {
+    slotsMessage.textContent = 'La fecha ya pasó. Elige hoy o una fecha futura.';
     return;
   }
   slotsMessage.textContent = 'Consultando horarios...';
@@ -28,9 +67,12 @@ async function cargarHorarios() {
     const params = new URLSearchParams({ idMedico: medico.value, fecha: fecha.value });
     const response = await fetch(`/api/citas/disponibilidad?${params}`);
     if (response.status === 401) return window.location.replace('/InicioSesion.html');
-    if (!response.ok) throw new Error('No se pudieron consultar los horarios.');
     const disponibles = await response.json();
-    slotsMessage.textContent = disponibles.length ? 'Selecciona una hora:' : 'No hay espacios disponibles para esa fecha.';
+    if (consulta !== consultaActual) return;
+    if (!response.ok) throw new Error(disponibles.error || 'No se pudieron consultar los horarios.');
+    slotsMessage.textContent = disponibles.length
+      ? 'Selecciona una hora disponible:'
+      : 'Este especialista no tiene espacios libres en esa fecha. Elige otro día.';
     for (const opcion of disponibles) {
       const label = document.createElement('label');
       label.className = 'horario';
@@ -39,15 +81,26 @@ async function cargarHorarios() {
       input.name = 'hora';
       input.value = opcion.hora;
       input.dataset.horario = opcion.idHorario;
-      input.addEventListener('change', () => { button.disabled = false; });
+      input.addEventListener('change', actualizarResumen);
       const span = document.createElement('span');
       span.textContent = opcion.hora;
       label.append(input, span);
       horarios.append(label);
     }
   } catch (error) {
-    slotsMessage.textContent = error.message;
+    if (consulta === consultaActual) slotsMessage.textContent = error.message;
   }
+}
+
+function proximaFechaConAtencion(doctor) {
+  const hoy = new Date();
+  for (let offset = 1; offset <= 7; offset += 1) {
+    const candidata = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + offset);
+    if (doctor.horarios.some((turno) => turno.dia === dias[candidata.getDay()])) {
+      return fechaLocal(candidata);
+    }
+  }
+  return '';
 }
 
 async function iniciar() {
@@ -58,30 +111,28 @@ async function iniciar() {
   document.querySelector('#avatar').textContent = patient.nombre.slice(0, 1).toUpperCase();
   fecha.min = fechaLocal(new Date());
   const response = await fetch('/api/citas/medicos');
-  if (!response.ok) {
-    mostrarError('No se pudieron cargar los especialistas. Actualiza la página.');
-    return;
-  }
-  const medicos = await response.json();
+  if (!response.ok) throw new Error('No se pudieron cargar los especialistas. Actualiza la página.');
+  especialistas = await response.json();
   medico.replaceChildren(new Option('Selecciona un especialista', ''));
-  for (const opcion of medicos) {
+  for (const opcion of especialistas) {
     medico.add(new Option(`${opcion.nombre} · ${opcion.especialidad}`, opcion.idMedico));
   }
   const medicoSolicitado = new URLSearchParams(window.location.search).get('medico');
-  if (medicos.some((opcion) => String(opcion.idMedico) === medicoSolicitado)) {
-    medico.value = medicoSolicitado;
-  } else if (medicos.length === 1) {
-    medico.value = String(medicos[0].idMedico);
-  }
-  if (medicos.length === 0) mostrarError('Todavía no hay especialistas con horarios disponibles.');
+  const elegido = especialistas.find((opcion) => String(opcion.idMedico) === medicoSolicitado) || especialistas[0];
+  if (!elegido) return mostrarError('Todavía no hay especialistas con horarios disponibles.');
+  medico.value = String(elegido.idMedico);
+  actualizarEspecialista();
+  fecha.value = proximaFechaConAtencion(elegido);
+  await cargarHorarios();
 }
 
-medico.addEventListener('change', cargarHorarios);
+medico.addEventListener('change', () => { actualizarEspecialista(); cargarHorarios(); });
 fecha.addEventListener('change', cargarHorarios);
+document.querySelector('#tipoConsulta').addEventListener('change', actualizarResumen);
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const seleccionado = form.querySelector('input[name="hora"]:checked');
-  if (!seleccionado) return;
+  if (!seleccionado || !form.reportValidity()) return;
   button.disabled = true;
   mostrarError('');
   try {
@@ -98,15 +149,13 @@ form.addEventListener('submit', async (event) => {
       }),
     });
     if (response.status === 401) return window.location.replace('/InicioSesion.html');
-    if (!response.ok) {
-      const result = await response.json();
-      throw new Error(result.error || 'No se pudo reservar la cita.');
-    }
-    window.location.assign('/MisCitas.html?reservada=1');
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'No se pudo reservar la cita.');
+    window.location.assign(`/MisCitas.html?reservada=${result.idCita}`);
   } catch (error) {
     await cargarHorarios();
     mostrarError(error.message);
   }
 });
 
-iniciar().catch(() => mostrarError('No se pudo cargar el formulario. Actualiza la página.'));
+iniciar().catch((error) => mostrarError(error.message || 'No se pudo cargar el formulario.'));

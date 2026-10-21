@@ -1,8 +1,12 @@
 .especialistas-panel { max-width: 960px; }
 .especialistas-lista { display: grid; gap: 16px; }
 .especialista-card { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px; border: 1px solid #dce6f0; border-radius: 12px; background: #fff; }
+.especialista-detalle { display: flex; align-items: center; gap: 18px; min-width: 0; }
+.especialista-detalle img { width: 84px; height: 84px; border-radius: 12px; object-fit: cover; flex: none; }
+.especialista-card .horario-semanal { margin-top: 9px; font-size: 13px; line-height: 1.45; }
 .especialista-card h3 { margin: 0 0 8px; font-size: 19px; }
 .especialista-card p { margin: 0; color: #66788a; }
 .especialista-card a { padding: 12px 18px; border-radius: 8px; background: #123b67; color: #fff; text-decoration: none; white-space: nowrap; }
 .especialista-card a:hover { background: #2f80ed; }
 @media (max-width: 650px) { .especialista-card { flex-direction: column; align-items: flex-start; } }
+@media (max-width: 650px) { .especialista-detalle img { width: 66px; height: 66px; } }

@@ -12,6 +12,8 @@ Las cinco dependencias principales son Spring Web MVC, Spring Data JPA, Thymelea
 
 El archivo `database/schema.sql` es una copia **idéntica** del DDL validado en el informe APF3. El archivo `script-prueba-incompleto.sql` recibido con el avance de la compañera no se ejecuta: define solo dos tablas, usa nombres/rol distintos y guarda una contraseña sin cifrar.
 
+Para el avance de reserva se agregó `database/migrations/001_medicos_sin_cuenta.sql`. Esta migración permite que un perfil médico de demostración tenga `id_usuario` nulo, sin crear nuevas cuentas de acceso. Es el único cambio respecto al DDL del informe: las siete tablas, claves y relaciones permanecen. Tras aplicarla, `database/demo-especialistas.sql` agrega tres especialistas ficticios y sus turnos de forma idempotente. Las cuentas de prueba siguen siendo solo `usuariotest` y `admin`.
+
 ## Requisitos
 
 - JDK 21 o superior.
@@ -60,6 +62,15 @@ $env:SEED_GENERO = 'FEMENINO'
 ```
 
 Cuando termine el perfil `seed`, detén el servidor y vuelve a iniciarlo sin ese perfil. Elimina las variables temporales con `Remove-Item Env:SEED_PASSWORD, Env:SEED_ADMIN_PASSWORD`.
+
+Para mostrar cuatro especialistas sin crear más cuentas, ejecuta después estos archivos en MySQL Workbench o con el cliente `mysql`, en este orden:
+
+```text
+database/migrations/001_medicos_sin_cuenta.sql
+database/demo-especialistas.sql
+```
+
+El segundo script se puede volver a ejecutar: identifica los médicos por correo y evita repetir los turnos. La pantalla **Especialistas** muestra los días y horas de cada uno; **Reservar cita** propone la próxima fecha en que atiende el médico elegido y permite cambiarla.
 
 ## Comprobación del flujo
 

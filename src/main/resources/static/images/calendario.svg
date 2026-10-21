@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="title">
+  <title id="title">Calendario de citas</title>
+  <rect x="6" y="10" width="36" height="32" rx="5" fill="none" stroke="#176b87" stroke-width="3"/>
+  <path d="M6 19h36M15 6v8M33 6v8" fill="none" stroke="#176b87" stroke-width="3" stroke-linecap="round"/>
+  <path d="m17 30 5 5 10-11" fill="none" stroke="#176b87" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

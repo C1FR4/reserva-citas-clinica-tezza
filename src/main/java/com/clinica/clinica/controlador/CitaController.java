@@ -45,7 +45,9 @@ public class CitaController {
         this.pacientes = pacientes;
     }
 
-    public record MedicoOpcion(int idMedico, String nombre, String especialidad) {}
+    public record HorarioSemanal(String dia, String inicio, String fin) {}
+    public record MedicoOpcion(int idMedico, String nombre, String especialidad,
+                               List<HorarioSemanal> horarios) {}
     public record HorarioOpcion(int idHorario, String hora) {}
     public record NuevaCita(int idMedico, int idHorario, String fecha, String hora,
                             String tipoConsulta, String motivo) {}
@@ -57,9 +59,19 @@ public class CitaController {
         if (pacienteActual(request) == null) return sinSesion();
         List<MedicoOpcion> opciones = jdbc.query(
                 "SELECT id_medico, CONCAT(nombre, ' ', apellido) AS nombre, especialidad " +
-                "FROM medico WHERE estado='ACTIVO' ORDER BY apellido, nombre",
+                "FROM medico m WHERE estado='ACTIVO' AND EXISTS " +
+                "(SELECT 1 FROM horario h WHERE h.id_medico=m.id_medico) ORDER BY apellido, nombre",
                 (rs, row) -> new MedicoOpcion(rs.getInt("id_medico"), rs.getString("nombre"),
-                        rs.getString("especialidad")));
+                        rs.getString("especialidad"), jdbc.query(
+                                "SELECT dia, TIME_FORMAT(hora_inicio,'%H:%i') AS inicio, " +
+                                "TIME_FORMAT(hora_fin,'%H:%i') AS fin FROM horario " +
+                                "WHERE id_medico=? ORDER BY CASE dia " +
+                                "WHEN 'LUNES' THEN 1 WHEN 'MARTES' THEN 2 " +
+                                "WHEN 'MIERCOLES' THEN 3 WHEN 'JUEVES' THEN 4 " +
+                                "WHEN 'VIERNES' THEN 5 WHEN 'SABADO' THEN 6 ELSE 7 END, hora_inicio",
+                                (horario, index) -> new HorarioSemanal(horario.getString("dia"),
+                                        horario.getString("inicio"), horario.getString("fin")),
+                                rs.getInt("id_medico"))));
         return ResponseEntity.ok(opciones);
     }
 
