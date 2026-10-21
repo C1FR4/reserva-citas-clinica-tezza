@@ -71,4 +71,4 @@ Pruebas automáticas del controlador:
 
 - El formulario de reserva y las citas que aparecen en el panel todavía no usan `cita` ni `horario`.
 - El alta de médicos heredada de la compañera se ha ajustado al DDL y al cifrado, pero falta comprobarla frente a una instancia MySQL real.
-- La prueba de integración con MySQL no pudo realizarse en el entorno de edición porque aquí no hay un servidor MySQL instalado.
+- La integración con MySQL 8.4.11 se verificó localmente el 21/10/2026 con el DDL de siete tablas: arranque con `ddl-auto=validate`, creación de un paciente de prueba, login, lectura del panel y cierre de sesión. En otra máquina se debe configurar su propia instancia MySQL y las variables `DB_*`.
