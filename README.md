@@ -2,7 +2,7 @@
 
 ## Estado de la rama C1FR4
 
-Esta rama integra el proyecto Spring Boot iniciado por una compañera con las pantallas HTML/CSS existentes. El primer flujo funcional es el acceso de pacientes: inicio de sesión con contraseña BCrypt, sesión HTTP, panel protegido, nombre real del paciente y cierre de sesión. También se conserva el panel administrativo inicial para registrar médicos, ajustado a los campos obligatorios del esquema. Las tarjetas y citas del panel del paciente siguen siendo datos de maqueta; la reserva real corresponde al siguiente avance.
+Esta rama integra el proyecto Spring Boot iniciado por una compañera con las pantallas HTML/CSS existentes. Ya funciona el acceso de pacientes con contraseña BCrypt y sesión HTTP, además de la consulta, reserva y cancelación de citas vinculadas a MySQL. El panel muestra las citas reales del paciente. También se conserva el panel administrativo inicial para registrar médicos, ajustado a los campos obligatorios del esquema.
 
 El archivo `database/schema.sql` es una copia **idéntica** del DDL validado en el informe APF3. El archivo `script-prueba-incompleto.sql` recibido con el avance de la compañera no se ejecuta: define solo dos tablas, usa nombres/rol distintos y guarda una contraseña sin cifrar.
 
@@ -39,7 +39,7 @@ Para comprobar la conexión, el inicio de Spring valida las entidades contra el 
 
 ## Crear un paciente de prueba
 
-Después de ejecutar el DDL, puedes iniciar una vez el perfil `seed`. Este perfil solo inserta un paciente si su usuario aún no existe y cifra la contraseña con BCrypt. Usa un DNI de prueba de ocho dígitos que no esté repetido.
+Después de ejecutar el DDL, puedes iniciar una vez el perfil `seed`. Inserta un paciente y un médico con horarios de lunes a viernes de 08:00 a 13:00 si aún no existen. La contraseña del paciente se cifra con BCrypt. Usa un DNI de prueba de ocho dígitos que no esté repetido.
 
 ```powershell
 $env:SEED_EMAIL = 'paciente@tezza.test'
@@ -60,6 +60,7 @@ Cuando aparezca `Paciente de prueba creado.`, detén el servidor y vuelve a inic
 2. Verifica que `PantallaPrincipal.html` muestre el nombre registrado.
 3. Cierra sesión y prueba abrir directamente `http://localhost:8080/PantallaPrincipal.html`: debe volver al login.
 4. Una clave incorrecta debe mostrar un error y no abrir el panel.
+5. En el panel, abre **Reservar cita**, elige una fecha laboral y uno de los espacios disponibles. La reserva debe aparecer en **Mis citas** y en el panel. Desde **Mis citas** puedes cancelar una reserva futura.
 
 Pruebas automáticas del controlador:
 
@@ -69,6 +70,6 @@ Pruebas automáticas del controlador:
 
 ## Alcance pendiente
 
-- El formulario de reserva y las citas que aparecen en el panel todavía no usan `cita` ni `horario`.
+- La reserva usa espacios de 30 minutos dentro de los rangos de `horario`. El DDL impide que dos citas activas ocupen el mismo espacio del médico o del paciente.
 - El alta de médicos heredada de la compañera se ha ajustado al DDL y al cifrado, pero falta comprobarla frente a una instancia MySQL real.
 - La integración con MySQL 8.4.11 se verificó localmente el 21/10/2026 con el DDL de siete tablas: arranque con `ddl-auto=validate`, creación de un paciente de prueba, login, lectura del panel y cierre de sesión. En otra máquina se debe configurar su propia instancia MySQL y las variables `DB_*`.

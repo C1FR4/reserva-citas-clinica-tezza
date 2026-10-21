@@ -1,168 +1,78 @@
 <!doctype html>
-
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Reserva de cita | Clínica Tezza</title>
-
-    <link rel="stylesheet" href="reservacita.css" />
+    <title>Reservar cita | Clínica Tezza</title>
+    <link rel="stylesheet" href="reservacita.css?v=2" />
   </head>
-
   <body>
-    <!-- =========================
-         ENCABEZADO
-    ========================== -->
-
     <header class="header">
       <div class="logo">
         <span>CLÍNICA TEZZA</span>
         <small>Clínica Padre Luis Tezza</small>
       </div>
-
       <nav class="menu">
         <a href="PantallaPrincipal.html">Inicio</a>
+        <a href="MisCitas.html">Mis citas</a>
         <a href="Especialista.html">Especialistas</a>
-        <a href="#">Contactos</a>
       </nav>
-
       <div class="usuario">
-        <div class="avatar">C</div>
-        <span>Cielo</span>
+        <div class="avatar" id="avatar">P</div>
+        <span id="patient-name">Paciente</span>
       </div>
     </header>
 
-    <!-- =========================
-         CONTENIDO PRINCIPAL
-    ========================== -->
-
     <main class="contenedor">
-      <!-- Volver a especialistas -->
-
-      <a href="Especialista.html" class="volver"> ← Volver a especialistas </a>
-
-      <!-- =========================
-             INFORMACIÓN DEL DOCTOR
-        ========================== -->
-
+      <a href="PantallaPrincipal.html" class="volver">← Volver al panel</a>
       <section class="doctor">
-        <!-- Foto del doctor -->
-
-        <div class="doctor-imagen">
-          <div class="imagen-placeholder">IMG</div>
-        </div>
-
-        <!-- Información del doctor -->
-
+        <div class="doctor-imagen"><div class="imagen-placeholder">+</div></div>
         <div class="doctor-informacion">
-          <span class="etiqueta"> ESPECIALISTA </span>
-
-          <h1>Dr. Jorge Pérez Castillo</h1>
-
-          <p>Medicina General</p>
+          <span class="etiqueta">NUEVA CITA</span>
+          <h1>Elige un especialista y horario</h1>
+          <p>Los espacios disponibles se actualizan al elegir la fecha.</p>
         </div>
       </section>
 
-      <!-- =========================
-             FORMULARIO DE RESERVA
-        ========================== -->
-
       <form class="formulario" id="formularioReserva">
-        <h2>Reserva tu cita</h2>
-
-        <!-- Nombre -->
-
+        <h2>Datos de la cita</h2>
         <div class="campo">
-          <label for="nombre"> Nombre completo </label>
-
-          <input
-            type="text"
-            id="nombre"
-            name="nombre"
-            placeholder="Ingrese su nombre completo"
-            required
-          />
+          <label for="medico">Especialista</label>
+          <select id="medico" name="medico" required>
+            <option value="">Cargando especialistas...</option>
+          </select>
         </div>
-
-        <!-- Número -->
-
         <div class="campo">
-          <label for="numero"> Número de teléfono </label>
-
-          <input
-            type="tel"
-            id="numero"
-            name="numero"
-            placeholder="Ingrese su número"
-            required
-          />
-        </div>
-
-        <!-- Fecha -->
-
-        <div class="campo">
-          <label for="fecha"> Fecha de la cita </label>
-
+          <label for="fecha">Fecha de la cita</label>
           <input type="date" id="fecha" name="fecha" required />
         </div>
-
-        <!-- =========================
-                 HORARIOS DISPONIBLES
-            ========================== -->
-
+        <div class="campo">
+          <label for="tipoConsulta">Tipo de consulta</label>
+          <select id="tipoConsulta" name="tipoConsulta" required>
+            <option value="PRESENCIAL">Presencial</option>
+            <option value="VIRTUAL">Virtual</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="motivo">Motivo de consulta (opcional)</label>
+          <input type="text" id="motivo" name="motivo" maxlength="255" placeholder="Describe brevemente tu consulta" />
+        </div>
         <div class="horarios">
           <h3>Espacios disponibles</h3>
-
-          <p>Seleccione un horario:</p>
-
-          <div class="horarios-opciones">
-            <label class="horario">
-              <input type="radio" name="hora" value="08:00" required />
-              <span>8:00 AM</span>
-            </label>
-
-            <label class="horario">
-              <input type="radio" name="hora" value="09:30" />
-              <span>9:30 AM</span>
-            </label>
-
-            <label class="horario">
-              <input type="radio" name="hora" value="11:00" />
-              <span>11:00 AM</span>
-            </label>
-
-            <label class="horario">
-              <input type="radio" name="hora" value="12:15" />
-              <span>12:15 PM</span>
-            </label>
-
-            <label class="horario">
-              <input type="radio" name="hora" value="12:45" />
-              <span>12:45 PM</span>
-            </label>
-          </div>
+          <p id="slots-message">Elige especialista y fecha para ver horarios.</p>
+          <div class="horarios-opciones" id="horarios-opciones"></div>
         </div>
-
-        <!-- =========================
-                 BOTÓN DE RESERVA
-            ========================== -->
-
-        <button type="submit" class="btn-reservar">
-          Reservar una cita
-          <span>→</span>
+        <p class="form-message" id="booking-message" role="alert" hidden></p>
+        <button type="submit" class="btn-reservar" id="booking-button" disabled>
+          Confirmar reserva <span>→</span>
         </button>
       </form>
     </main>
 
-    <!-- =========================
-         PIE DE PÁGINA
-    ========================== -->
-
     <footer class="footer">
       <p>© 2026 Clínica Padre Luis Tezza</p>
-
       <p>Atención médica y bienestar</p>
     </footer>
+    <script src="reservar.js" defer></script>
   </body>
 </html>

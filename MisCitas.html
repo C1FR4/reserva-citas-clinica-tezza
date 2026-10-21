@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mis citas | Clínica Tezza</title>
+    <link rel="stylesheet" href="reservacita.css?v=2" />
+    <link rel="stylesheet" href="mis-citas.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo"><span>CLÍNICA TEZZA</span><small>Clínica Padre Luis Tezza</small></div>
+      <nav class="menu">
+        <a href="PantallaPrincipal.html">Inicio</a>
+        <a href="ReservarCita.html">Reservar cita</a>
+        <a href="Especialista.html">Especialistas</a>
+      </nav>
+      <div class="usuario"><div class="avatar" id="avatar">P</div><span id="patient-name">Paciente</span></div>
+    </header>
+    <main class="contenedor">
+      <a href="PantallaPrincipal.html" class="volver">← Volver al panel</a>
+      <section class="citas-header">
+        <div><span class="etiqueta">TUS RESERVAS</span><h1>Mis citas</h1><p>Consulta tus citas y cancela las reservas futuras que ya no necesites.</p></div>
+      </section>
+      <p class="notice" id="notice" role="status" hidden></p>
+      <div id="citas-lista" class="citas-lista"><p>Cargando citas...</p></div>
+    </main>
+    <footer class="footer"><p>© 2026 Clínica Padre Luis Tezza</p><p>Atención médica y bienestar</p></footer>
+    <script src="mis-citas.js" defer></script>
+  </body>
+</html>

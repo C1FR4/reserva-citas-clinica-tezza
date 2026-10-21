@@ -1,0 +1,18 @@
+.citas-header, .cita-tarjeta { background: white; border-radius: 12px; padding: 28px; box-shadow: 0 3px 12px rgba(0,0,0,.06); }
+.citas-header { margin-bottom: 24px; }
+.citas-header h1 { margin: 12px 0 8px; font-size: 28px; }
+.citas-header p { color: #66717b; }
+.citas-lista { display: grid; gap: 16px; min-height: 160px; }
+.cita-tarjeta { display: flex; align-items: center; justify-content: space-between; gap: 18px; border-left: 5px solid #176b87; }
+.cita-tarjeta.cancelada { border-left-color: #aab1b8; }
+.cita-tarjeta h2 { font-size: 19px; margin: 0 0 8px; }
+.cita-tarjeta p { margin: 4px 0; color: #58636d; }
+.cita-tarjeta .estado { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: bold; color: #176b87; }
+.cita-tarjeta.cancelada .estado { color: #737b83; }
+.cancelar { border: 1px solid #a63434; color: #a63434; background: white; border-radius: 8px; padding: 10px 16px; cursor: pointer; white-space: nowrap; }
+.cancelar:hover { background: #fff2f2; }
+.cancelar:disabled { opacity: .5; cursor: wait; }
+.notice { padding: 12px 16px; background: #e7f3f7; color: #176b87; border-radius: 8px; margin-bottom: 18px; }
+.vacio { background: white; padding: 32px; border-radius: 12px; }
+.vacio a { display: inline-block; color: #176b87; margin-top: 12px; }
+@media (max-width: 650px) { .cita-tarjeta { align-items: flex-start; flex-direction: column; } }

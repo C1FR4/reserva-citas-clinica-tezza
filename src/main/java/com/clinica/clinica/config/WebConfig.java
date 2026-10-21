@@ -30,6 +30,7 @@ public class WebConfig implements WebMvcConfigurer {
                 response.sendRedirect("/InicioSesion.html");
                 return false;
             }
-        }).addPathPatterns("/PantallaPrincipal.html");
+        }).addPathPatterns("/PantallaPrincipal.html", "/ReservarCita.html",
+                "/MisCitas.html", "/DetalleReserva.html");
     }
 }

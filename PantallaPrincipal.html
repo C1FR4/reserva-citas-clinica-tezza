@@ -7,7 +7,7 @@
 
     <title>Panel | Clínica Tezza</title>
 
-    <link rel="stylesheet" href="pantallaprincipal.css" />
+    <link rel="stylesheet" href="pantallaprincipal.css?v=2" />
   </head>
 
   <body>
@@ -17,11 +17,9 @@
       <div class="logo">CLÍNICA TEZZA</div>
 
       <nav class="menu-dashboard">
-        <a href="#"> Nosotros </a>
+        <a href="MisCitas.html"> Mis citas </a>
 
-        <a href="#"> Especialistas </a>
-
-        <a href="#"> Contactos </a>
+        <a href="Especialista.html"> Especialistas </a>
       </nav>
 
       <div class="usuario-header">
@@ -29,6 +27,7 @@
 
         <span data-patient-name> Paciente </span>
       </div>
+      <button class="logout-mobile" id="logout-mobile" type="button">Salir</button>
     </header>
 
     <!-- CONTENEDOR PRINCIPAL -->
@@ -42,19 +41,19 @@
         </div>
 
         <nav class="sidebar-menu">
-          <a href="#" class="activo">
+          <a href="PantallaPrincipal.html" class="activo">
             <span class="icono-sidebar"> ▦ </span>
 
             Inicio
           </a>
 
-          <a href="#">
+          <a href="ReservarCita.html">
             <span class="icono-sidebar"> + </span>
 
             Reservar cita
           </a>
 
-          <a href="#">
+          <a href="MisCitas.html">
             <span class="icono-sidebar"> ◷ </span>
 
             Mis citas
@@ -66,17 +65,6 @@
             Especialistas
           </a>
 
-          <a href="#">
-            <span class="icono-sidebar"> ▤ </span>
-
-            Historial
-          </a>
-
-          <a href="#">
-            <span class="icono-sidebar"> ⚙ </span>
-
-            Configuración
-          </a>
         </nav>
 
         <div class="sidebar-usuario">
@@ -105,7 +93,7 @@
             <p>Consulta tus citas y gestiona tu atención médica.</p>
           </div>
 
-          <a href="#" class="btn-cita"> + Reservar cita </a>
+          <a href="ReservarCita.html" class="btn-cita"> + Reservar cita </a>
         </section>
 
         <!-- TARJETAS -->
@@ -117,9 +105,9 @@
             <div>
               <p>Próxima cita</p>
 
-              <h2>29</h2>
+              <h2 id="next-date">—</h2>
 
-              <small> Septiembre 2026 </small>
+              <small id="next-month">Sin cita programada</small>
             </div>
           </article>
 
@@ -127,11 +115,11 @@
             <span class="estadistica-icono"> ✓ </span>
 
             <div>
-              <p>Citas atendidas</p>
+              <p>Citas registradas</p>
 
-              <h2>08</h2>
+              <h2 id="completed-count">0</h2>
 
-              <small> Este año </small>
+              <small> Registradas </small>
             </div>
           </article>
 
@@ -141,9 +129,9 @@
             <div>
               <p>Especialidad</p>
 
-              <h2>Medicina</h2>
+              <h2 id="next-specialty">—</h2>
 
-              <small> Atención general </small>
+              <small id="next-doctor">Sin cita programada</small>
             </div>
           </article>
         </section>
@@ -161,71 +149,15 @@
                 <p>Tus próximas atenciones médicas</p>
               </div>
 
-              <a href="#"> Ver todas </a>
+              <a href="MisCitas.html"> Ver todas </a>
             </div>
 
-            <div class="cita">
-              <div class="fecha">
-                <strong> 29 </strong>
-
-                <span> SEP </span>
-              </div>
-
-              <div class="datos-cita">
-                <h3>Consulta médica</h3>
-
-                <p>Medicina general</p>
-
-                <span> 12:30 PM </span>
-              </div>
-
-              <span class="estado"> Confirmada </span>
-            </div>
-
-            <div class="cita">
-              <div class="fecha">
-                <strong> 05 </strong>
-
-                <span> OCT </span>
-              </div>
-
-              <div class="datos-cita">
-                <h3>Consulta especializada</h3>
-
-                <p>Cardiología</p>
-
-                <span> 10:00 AM </span>
-              </div>
-
-              <span class="estado"> Confirmada </span>
-            </div>
+            <div id="upcoming-list"><p class="empty-state">Aún no tienes citas próximas.</p></div>
           </div>
 
-          <!-- ACCIONES -->
-
-          <div class="panel acciones">
-            <h2>Acciones rápidas</h2>
-
-            <p>¿Qué deseas realizar?</p>
-
-            <a href="#">
-              <span>+</span>
-              Reservar una cita
-            </a>
-
-            <a href="#">
-              <span>◷</span>
-              Consultar mis citas
-            </a>
-
-            <a href="#">
-              <span>♡</span>
-              Buscar especialista
-            </a>
-          </div>
         </section>
       </main>
     </div>
-    <script src="panel.js" defer></script>
+    <script src="panel.js?v=2" defer></script>
   </body>
 </html>

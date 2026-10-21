@@ -315,8 +315,13 @@ body {
 .contenido-dashboard {
 
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr;
     gap: 20px;
+}
+
+.empty-state {
+    color: #718096;
+    padding: 12px 0;
 }
 
 
@@ -490,6 +495,8 @@ body {
 }
 
 
+.logout-mobile { display: none; }
+
 .logout-button {
     display: block;
     width: calc(100% - 32px);
@@ -528,6 +535,9 @@ body {
 
 @media (max-width: 650px) {
 
+    .header-dashboard { padding: 0 16px; gap: 10px; }
+    .logo { font-size: 17px; }
+
     .sidebar {
 
         display: none;
@@ -538,10 +548,10 @@ body {
         padding: 20px;
     }
 
-    .menu-dashboard {
-
-        display: none;
-    }
+    .menu-dashboard { display: flex; gap: 12px; }
+    .menu-dashboard a { font-size: 12px; }
+    .logout-mobile { display: block; border: 0; background: none; color: #123b67; cursor: pointer; }
+    .usuario-header { display: none; }
 
     .bienvenida {
 

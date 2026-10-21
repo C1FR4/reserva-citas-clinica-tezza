@@ -272,7 +272,7 @@ body {
     color: #444;
 }
 
-.campo input {
+.campo input, .campo select {
     width: 100%;
 
     padding: 13px 15px;
@@ -291,7 +291,7 @@ body {
 
 /* Cuando el usuario selecciona el campo */
 
-.campo input:focus {
+.campo input:focus, .campo select:focus {
     border-color: #176b87;
 
     box-shadow: 0 0 0 3px rgba(23, 107, 135, 0.1);
@@ -526,4 +526,16 @@ body {
         justify-content: center;
     }
 
+}
+
+.btn-reservar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.form-message {
+    margin-top: 20px;
+    color: #a63434;
+    font-size: 14px;
 }
