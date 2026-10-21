@@ -214,3 +214,9 @@ button:hover {
     }
 
 }
+
+.login-error {
+    margin: 0 0 16px;
+    color: #a22121;
+    font-size: 14px;
+}

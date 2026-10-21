@@ -12,3 +12,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Entorno local y compilación
+.env
+target/
+node_modules/

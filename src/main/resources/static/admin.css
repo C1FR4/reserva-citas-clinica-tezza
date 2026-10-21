@@ -1,0 +1,143 @@
+
+:root {
+    --azul-oscuro: #123b67;
+    --azul-principal: #2f80ed;
+    --fondo: #f4f7fb;
+    --texto: #18324b;
+    --gris: #718096;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--fondo);
+    color: var(--texto);
+}
+
+.barra-superior {
+    background: linear-gradient(110deg, var(--azul-oscuro), var(--azul-principal));
+    box-shadow: 0 3px 12px rgba(18, 59, 103, 0.15);
+}
+
+.etiqueta {
+    color: var(--azul-principal);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.titulo-principal {
+    color: var(--texto);
+    font-weight: 700;
+}
+
+.tarjeta {
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(24, 50, 75, 0.06);
+}
+
+.encabezado-tarjeta {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-bottom: 1px solid #e8edf3;
+}
+
+.encabezado-tarjeta h5 {
+    color: var(--texto);
+    font-weight: 700;
+}
+
+.encabezado-tarjeta small,
+.encabezado-formulario small {
+    color: var(--gris);
+}
+
+.encabezado-formulario {
+    padding: 20px;
+    background: var(--azul-oscuro);
+    color: white;
+    border: none;
+}
+
+.encabezado-formulario h5 {
+    font-weight: 700;
+}
+
+.encabezado-formulario small {
+    color: #dbeeff;
+}
+
+.form-label {
+    color: #34495e;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.form-control {
+    padding: 11px 13px;
+    border: 1px solid #d8e0e8;
+    border-radius: 9px;
+}
+
+.form-control:focus {
+    border-color: var(--azul-principal);
+    box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.12);
+}
+
+.subtitulo-formulario {
+    margin-bottom: 16px;
+    color: var(--azul-oscuro);
+    font-weight: 700;
+}
+
+.boton-principal {
+    padding: 13px;
+    border: none;
+    border-radius: 9px;
+    background-color: var(--azul-oscuro);
+    color: white;
+    font-weight: 700;
+    transition: background-color 0.2s ease;
+}
+
+.boton-principal:hover {
+    background-color: var(--azul-principal);
+    color: white;
+}
+
+.table thead th {
+    padding: 13px 10px;
+    color: var(--gris);
+    font-size: 12px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 14px 10px;
+    font-size: 13px;
+}
+
+.alert {
+    border: none;
+    border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+    main.container-fluid {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+
+    .titulo-principal {
+        font-size: 27px;
+    }
+}

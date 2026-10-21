@@ -25,9 +25,9 @@
       </nav>
 
       <div class="usuario-header">
-        <div class="avatar">C</div>
+        <div class="avatar" data-avatar>C</div>
 
-        <span> Cielo </span>
+        <span data-patient-name> Paciente </span>
       </div>
     </header>
 
@@ -80,14 +80,15 @@
         </nav>
 
         <div class="sidebar-usuario">
-          <div class="avatar">C</div>
+          <div class="avatar" data-avatar>C</div>
 
           <div>
-            <strong> Cielo </strong>
+            <strong data-patient-name> Paciente </strong>
 
             <small> Paciente </small>
           </div>
         </div>
+        <button class="logout-button" id="logout-button" type="button">Cerrar sesión</button>
       </aside>
 
       <!-- CONTENIDO -->
@@ -99,7 +100,7 @@
           <div>
             <span> PANEL DEL PACIENTE </span>
 
-            <h1>¡Hola, Cielo!</h1>
+            <h1 id="welcome-name">¡Hola!</h1>
 
             <p>Consulta tus citas y gestiona tu atención médica.</p>
           </div>
@@ -225,5 +226,6 @@
         </section>
       </main>
     </div>
+    <script src="panel.js" defer></script>
   </body>
 </html>

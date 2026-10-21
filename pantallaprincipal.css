@@ -490,6 +490,18 @@ body {
 }
 
 
+.logout-button {
+    display: block;
+    width: calc(100% - 32px);
+    margin: 12px 16px;
+    padding: 10px;
+    border: 1px solid #d7e2ee;
+    border-radius: 8px;
+    background: #fff;
+    color: #123b67;
+    cursor: pointer;
+}
+
 /* =========================
    RESPONSIVE
 ========================= */
