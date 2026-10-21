@@ -31,6 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
                 return false;
             }
         }).addPathPatterns("/PantallaPrincipal.html", "/ReservarCita.html",
-                "/MisCitas.html", "/DetalleReserva.html");
+                "/MisCitas.html", "/Especialista.html", "/Oftalmologia.html",
+                "/Medico.html", "/DetalleReserva.html");
     }
 }

@@ -5,7 +5,7 @@ import com.clinica.clinica.modelo.Usuario;
 import com.clinica.clinica.repositorio.MedicoRepository;
 import com.clinica.clinica.repositorio.UsuarioRepository;
 import java.util.List;
-import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,6 +21,8 @@ public class SeedMedicoDemo implements CommandLineRunner {
     private final JdbcTemplate jdbc;
     private final BCryptPasswordEncoder encoder;
 
+    @Value("${SEED_ADMIN_PASSWORD:}") private String adminPassword;
+
     public SeedMedicoDemo(UsuarioRepository usuarios, MedicoRepository medicos,
                           JdbcTemplate jdbc, BCryptPasswordEncoder encoder) {
         this.usuarios = usuarios;
@@ -32,12 +34,31 @@ public class SeedMedicoDemo implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        if (usuarios.findByNombreUsuario("medico.demo@tezza.test").isPresent()) return;
-        Usuario usuario = new Usuario();
-        usuario.setNombreUsuario("medico.demo@tezza.test");
-        usuario.setContrasena(encoder.encode(UUID.randomUUID().toString()));
-        usuario.setRol("MEDICO");
-        usuario = usuarios.saveAndFlush(usuario);
+        Usuario usuario = usuarios.findByNombreUsuario("admin").orElse(null);
+        if (usuario == null) {
+            if (adminPassword.length() < 8) {
+                throw new IllegalArgumentException("Configura SEED_ADMIN_PASSWORD (8+).");
+            }
+            usuario = new Usuario();
+            usuario.setNombreUsuario("admin");
+            usuario.setContrasena(encoder.encode(adminPassword));
+            usuario.setRol("ADMINISTRADOR");
+            usuario = usuarios.saveAndFlush(usuario);
+        }
+        if (!"ADMINISTRADOR".equals(usuario.getRol())) {
+            throw new IllegalStateException("La cuenta admin tiene un rol incorrecto.");
+        }
+        Integer registrosAdmin = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM administrador WHERE id_usuario=?", Integer.class,
+                usuario.getIdUsuario());
+        if (registrosAdmin == 0) {
+            jdbc.update("INSERT INTO administrador (nombre, apellido, correo, id_usuario) " +
+                    "VALUES ('Jorge', 'Pérez Castillo', 'admin@tezza.test', ?)", usuario.getIdUsuario());
+        }
+        Integer registrosMedico = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM medico WHERE id_usuario=?", Integer.class,
+                usuario.getIdUsuario());
+        if (registrosMedico > 0) return;
 
         Medico medico = new Medico();
         medico.setNombre("Jorge");

@@ -67,7 +67,12 @@ async function iniciar() {
   for (const opcion of medicos) {
     medico.add(new Option(`${opcion.nombre} · ${opcion.especialidad}`, opcion.idMedico));
   }
-  if (medicos.length === 1) medico.value = String(medicos[0].idMedico);
+  const medicoSolicitado = new URLSearchParams(window.location.search).get('medico');
+  if (medicos.some((opcion) => String(opcion.idMedico) === medicoSolicitado)) {
+    medico.value = medicoSolicitado;
+  } else if (medicos.length === 1) {
+    medico.value = String(medicos[0].idMedico);
+  }
   if (medicos.length === 0) mostrarError('Todavía no hay especialistas con horarios disponibles.');
 }
 

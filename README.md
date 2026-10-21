@@ -2,7 +2,7 @@
 
 ## Estado de la rama C1FR4
 
-Esta rama integra el proyecto Spring Boot iniciado por una compañera con las pantallas HTML/CSS existentes. Ya funciona el acceso de pacientes con contraseña BCrypt y sesión HTTP, además de la consulta, reserva y cancelación de citas vinculadas a MySQL. El panel muestra las citas reales del paciente. También se conserva el panel administrativo inicial para registrar médicos, ajustado a los campos obligatorios del esquema.
+Esta rama integra el proyecto Spring Boot iniciado por una compañera con las pantallas HTML/CSS existentes. Ya funciona el acceso de pacientes con contraseña BCrypt y sesión HTTP, además de la consulta, reserva y cancelación de citas vinculadas a MySQL. El panel y la página de especialistas muestran datos reales. También se conserva el panel administrativo inicial para registrar médicos, ajustado a los campos obligatorios del esquema.
 
 El archivo `database/schema.sql` es una copia **idéntica** del DDL validado en el informe APF3. El archivo `script-prueba-incompleto.sql` recibido con el avance de la compañera no se ejecuta: define solo dos tablas, usa nombres/rol distintos y guarda una contraseña sin cifrar.
 
@@ -39,20 +39,21 @@ Para comprobar la conexión, el inicio de Spring valida las entidades contra el 
 
 ## Crear un paciente de prueba
 
-Después de ejecutar el DDL, puedes iniciar una vez el perfil `seed`. Inserta un paciente y un médico con horarios de lunes a viernes de 08:00 a 13:00 si aún no existen. La contraseña del paciente se cifra con BCrypt. Usa un DNI de prueba de ocho dígitos que no esté repetido.
+Después de ejecutar el DDL, puedes iniciar una vez el perfil `seed`. Inserta `usuariotest` como paciente y `admin` como administrador, además de un médico con horarios de lunes a viernes de 08:00 a 13:00 si aún no existen. El médico de demostración comparte la fila `admin` en `usuario` para conservar la clave foránea obligatoria del DDL sin crear una tercera cuenta de prueba. Ambas contraseñas se cifran con BCrypt. Usa un DNI de prueba de ocho dígitos que no esté repetido.
 
 ```powershell
-$env:SEED_EMAIL = 'paciente@tezza.test'
+$env:SEED_EMAIL = 'usuariotest'
 $env:SEED_PASSWORD = Read-Host 'Clave de prueba (mínimo 8 caracteres)' -MaskInput
-$env:SEED_NOMBRE = 'Ana'
-$env:SEED_APELLIDO = 'Pérez'
+$env:SEED_ADMIN_PASSWORD = Read-Host 'Clave del administrador (mínimo 8 caracteres)' -MaskInput
+$env:SEED_NOMBRE = 'Usuario'
+$env:SEED_APELLIDO = 'Test'
 $env:SEED_DNI = '12345678'
 $env:SEED_FECHA_NACIMIENTO = '1995-05-20'
 $env:SEED_GENERO = 'FEMENINO'
 .\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=seed'
 ```
 
-Cuando aparezca `Paciente de prueba creado.`, detén el servidor y vuelve a iniciarlo sin el perfil `seed`. Elimina la variable temporal de la contraseña con `Remove-Item Env:SEED_PASSWORD`.
+Cuando termine el perfil `seed`, detén el servidor y vuelve a iniciarlo sin ese perfil. Elimina las variables temporales con `Remove-Item Env:SEED_PASSWORD, Env:SEED_ADMIN_PASSWORD`.
 
 ## Comprobación del flujo
 
@@ -61,6 +62,7 @@ Cuando aparezca `Paciente de prueba creado.`, detén el servidor y vuelve a inic
 3. Cierra sesión y prueba abrir directamente `http://localhost:8080/PantallaPrincipal.html`: debe volver al login.
 4. Una clave incorrecta debe mostrar un error y no abrir el panel.
 5. En el panel, abre **Reservar cita**, elige una fecha laboral y uno de los espacios disponibles. La reserva debe aparecer en **Mis citas** y en el panel. Desde **Mis citas** puedes cancelar una reserva futura.
+6. En **Especialistas**, comprueba que el listado provenga de MySQL. El botón del médico debe abrir **Reservar cita** con ese especialista seleccionado.
 
 Pruebas automáticas del controlador:
 
