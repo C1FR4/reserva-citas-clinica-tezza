@@ -2,15 +2,15 @@
 
 ## Estado de la rama C1FR4
 
-Esta rama integra el proyecto Spring Boot iniciado por una compañera con las pantallas HTML/CSS existentes. Ya funciona el acceso de pacientes con contraseña BCrypt y sesión HTTP, además de la consulta, reserva y cancelación de citas vinculadas a MySQL. El panel y la página de especialistas muestran datos reales. El panel administrativo cubre la consulta de citas, la gestión de perfiles médicos y la asignación de horarios.
+Esta rama integra el proyecto Spring Boot iniciado por una compañera con las pantallas HTML/CSS existentes. Ya funciona el acceso de pacientes con contraseña BCrypt y sesión HTTP, además de la consulta, reserva, modificación y cancelación de citas vinculadas a MySQL. El panel y la página de especialistas muestran datos reales. El panel administrativo cubre la consulta de citas, la gestión de perfiles médicos y la asignación de horarios.
 
-El acceso de `admin` utiliza el mismo formulario de inicio de sesión y abre `/admin`. El panel administrativo permite consultar citas de toda la clínica, registrar y editar perfiles médicos, cambiar su estado, asignar o retirar horarios. El alta de un perfil médico no crea una cuenta automáticamente. Para probar el rol médico se habilita una única cuenta `medicotest`, vinculada a un perfil existente. Los horarios con citas asociadas no se pueden retirar, y un médico con citas futuras no se puede desactivar hasta resolverlas.
+El acceso de `admin` utiliza el mismo formulario de inicio de sesión y abre `/admin`. El panel administrativo permite consultar citas de toda la clínica, registrar y editar perfiles médicos, cambiar su estado, asignar o retirar horarios, exportar un listado XLSX y eliminar físicamente solo citas previamente canceladas. El alta de un perfil médico no crea una cuenta automáticamente. Para probar el rol médico se habilita una única cuenta `medicotest`, vinculada a un perfil existente. Los horarios con citas asociadas no se pueden retirar, y un médico con citas futuras no se puede desactivar hasta resolverlas.
 
 ## Estructura del proyecto
 
 La base Maven se generó con Spring Initializr para Java 21 y Spring Boot 4.1.1. El código de la aplicación está en `src/main/java/com/clinica/clinica`, las pantallas y sus recursos en `src/main/resources/static`, la vista administrativa Thymeleaf en `src/main/resources/templates`, y las pruebas en `src/test/java`. Las antiguas maquetas con nombres y médicos ficticios se conservan en `legacy/`, fuera del sitio servido por Spring.
 
-Las cinco dependencias principales son Spring Web MVC, Spring Data JPA, Thymeleaf, Validation y MySQL Driver. `spring-security-crypto` permite verificar contraseñas BCrypt sin activar una segunda pantalla de login. H2 y los módulos de pruebas de Spring solo se usan al ejecutar tests. Data JPA ya incluye JDBC y el pool de conexiones, por lo que no hace falta agregar otro conector MySQL.
+Las dependencias base son Spring Web MVC, Spring Data JPA, Thymeleaf, Validation y MySQL Driver. `spring-security-crypto` verifica contraseñas BCrypt. Guava normaliza texto de formularios, Apache Commons Validator valida correos y Apache POI genera el reporte XLSX; Logback llega mediante los starters de Spring Boot y registra accesos mediante SLF4J. H2 y los módulos de pruebas de Spring solo se usan al ejecutar tests. Data JPA ya incluye JDBC y el pool de conexiones. Node.js se usa como herramienta auxiliar para comprobar la sintaxis del JavaScript del frontend con `node --run check:js`; no ejecuta el servidor.
 
 El archivo `database/schema.sql` es una copia **idéntica** del DDL validado en el informe APF3. El archivo `script-prueba-incompleto.sql` recibido con el avance de la compañera no se ejecuta: define solo dos tablas, usa nombres/rol distintos y guarda una contraseña sin cifrar.
 
@@ -91,7 +91,7 @@ Inicia después la aplicación sin ese perfil. `medicotest` abre `/medico`, cons
 2. Verifica que `PantallaPrincipal.html` muestre el nombre registrado.
 3. Cierra sesión y prueba abrir directamente `http://localhost:8080/PantallaPrincipal.html`: debe volver al login.
 4. Una clave incorrecta debe mostrar un error y no abrir el panel.
-5. En el panel, abre **Reservar cita**, elige una fecha laboral y uno de los espacios disponibles. La reserva debe aparecer en **Mis citas** y en el panel. Desde **Mis citas** puedes cancelar una reserva futura.
+5. En el panel, abre **Reservar cita**, elige una fecha laboral y uno de los espacios disponibles. La reserva debe aparecer en **Mis citas** y en el panel. Desde **Mis citas** puedes modificar la reserva hasta dos veces o cancelarla, siempre con al menos 24 horas de anticipación. La edición permite elegir un nuevo especialista y horario disponibles.
 6. En **Especialistas**, comprueba que el listado provenga de MySQL. El botón del médico debe abrir **Reservar cita** con ese especialista seleccionado. Desde la reserva, vuelve a **Especialistas** y comprueba que el enlace de **Mis citas** siga funcionando y que el nombre del paciente sea correcto.
 
 Pruebas automáticas del controlador:
@@ -100,8 +100,17 @@ Pruebas automáticas del controlador:
 .\mvnw.cmd test
 ```
 
-## Alcance pendiente
+Para revisar la sintaxis de los scripts del frontend con Node.js:
+
+```powershell
+node --run check:js
+```
+
+Las pruebas automáticas cubren reglas y acceso mediante mocks y H2. El 25/10/2026 se comprobó también el flujo completo sobre MySQL 8.4.13 local: login de los tres roles, reserva y modificación de cita, cancelación, rechazo de eliminación de una cita activa, eliminación administrativa de una cita cancelada, agenda del médico, exportación XLSX y restricciones de acceso. La disponibilidad excluye las horas ya ocupadas por el médico o por el paciente.
+
+## Alcance y pendientes
 
 - La reserva usa espacios de 30 minutos dentro de los rangos de `horario`. El DDL impide que dos citas activas ocupen el mismo espacio del médico o del paciente.
-- La agenda del médico y el registro de asistencia están implementados en esta rama. La creación pública de cuentas de pacientes, la confirmación y el envío de recordatorios siguen pendientes.
+- La agenda del médico, el registro de asistencia, la modificación de citas y la exportación XLSX administrativa están implementados en esta rama. La creación pública de cuentas de pacientes, la confirmación y el envío de recordatorios siguen pendientes.
 - La integración con MySQL 8.4.11 se verificó localmente el 21/10/2026 con el DDL de siete tablas: arranque con `ddl-auto=validate`, creación de un paciente de prueba, login, lectura del panel y cierre de sesión. En otra máquina se debe configurar su propia instancia MySQL y las variables `DB_*`.
+- La repetición del 25/10/2026 usó una instancia portátil aislada en `127.0.0.1:3307`, con las siete tablas del esquema y los médicos y horarios de demostración. El registro está en `_trabajo_apf3/12_pruebas_e2e/PRUEBAS_E2E.txt`.

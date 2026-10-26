@@ -111,10 +111,10 @@
 
     <section id="citas" class="seccion">
       <div class="seccion-titulo"><div><h2>Citas de la clínica</h2><p>Consulta las reservas de todos los pacientes.</p></div></div>
-      <div class="tarjeta"><div class="tarjeta-encabezado"><h3>Listado general</h3></div>
-        <div class="tabla-scroll"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Paciente</th><th>Médico</th><th>Especialidad</th><th>Tipo</th><th>Estado</th></tr></thead>
-          <tbody><tr th:each="cita : ${citas}"><td th:text="${cita.fecha}">Fecha</td><td th:text="${cita.hora}">Hora</td><td><strong th:text="${cita.paciente}">Paciente</strong><small th:text="${'DNI ' + cita.dni_paciente}">DNI</small></td><td th:text="${cita.medico}">Médico</td><td th:text="${cita.especialidad}">Especialidad</td><td th:text="${cita.tipo_consulta}">Tipo</td><td><span class="estado" th:text="${cita.estado}">Estado</span></td></tr>
-          <tr th:if="${#lists.isEmpty(citas)}"><td colspan="7" class="vacio">Aún no hay citas registradas.</td></tr></tbody>
+      <div class="tarjeta"><div class="tarjeta-encabezado"><h3>Listado general</h3><a href="/admin/citas/exportar" class="enlace-tabla">Descargar Excel</a></div>
+        <div class="tabla-scroll"><table><thead><tr><th>Fecha</th><th>Hora</th><th>Paciente</th><th>Médico</th><th>Especialidad</th><th>Tipo</th><th>Estado</th><th>Asistencia</th><th>Acción</th></tr></thead>
+          <tbody><tr th:each="cita : ${citas}"><td th:text="${cita.fecha}">Fecha</td><td th:text="${cita.hora}">Hora</td><td><strong th:text="${cita.paciente}">Paciente</strong><small th:text="${'DNI ' + cita.dni_paciente}">DNI</small></td><td th:text="${cita.medico}">Médico</td><td th:text="${cita.especialidad}">Especialidad</td><td th:text="${cita.tipo_consulta}">Tipo</td><td><span class="estado" th:text="${cita.estado}">Estado</span></td><td th:text="${cita.asistencia}">Pendiente</td><td><form th:if="${cita.estado == 'CANCELADA'}" action="/admin/citas/eliminar" method="post" class="form-eliminar-cita"><input type="hidden" name="idCita" th:value="${cita.id_cita}"/><button type="submit" class="enlace-tabla">Eliminar registro</button></form></td></tr>
+          <tr th:if="${#lists.isEmpty(citas)}"><td colspan="9" class="vacio">Aún no hay citas registradas.</td></tr></tbody>
         </table></div>
       </div>
     </section>

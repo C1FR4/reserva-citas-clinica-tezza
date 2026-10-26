@@ -16,3 +16,10 @@ document.querySelectorAll('[data-confirmar]').forEach((boton) => {
     if (!window.confirm(boton.dataset.confirmar)) evento.preventDefault();
   });
 });
+document.querySelectorAll('.form-eliminar-cita').forEach((formulario) => {
+  formulario.addEventListener('submit', (evento) => {
+    if (!window.confirm('Esta eliminación es definitiva. ¿Eliminar la cita cancelada?')) {
+      evento.preventDefault();
+    }
+  });
+});

@@ -2,6 +2,7 @@ package com.clinica.clinica.controlador;
 
 import com.clinica.clinica.modelo.Paciente;
 import com.clinica.clinica.repositorio.PacienteRepository;
+import com.clinica.clinica.servicio.MantenimientoCitaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.time.DateTimeException;
@@ -24,6 +25,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,10 +41,13 @@ public class CitaController {
 
     private final JdbcTemplate jdbc;
     private final PacienteRepository pacientes;
+    private final MantenimientoCitaService mantenimiento;
 
-    public CitaController(JdbcTemplate jdbc, PacienteRepository pacientes) {
+    public CitaController(JdbcTemplate jdbc, PacienteRepository pacientes,
+                          MantenimientoCitaService mantenimiento) {
         this.jdbc = jdbc;
         this.pacientes = pacientes;
+        this.mantenimiento = mantenimiento;
     }
 
     public record HorarioSemanal(String dia, String inicio, String fin) {}
@@ -53,6 +58,12 @@ public class CitaController {
                             String tipoConsulta, String motivo) {}
     public record CitaResumen(int idCita, String fecha, String hora, String medico,
                               String especialidad, String tipoConsulta, String estado) {}
+
+    public record CambioCita(int idMedico, int idHorario, String fecha, String hora,
+                            String tipoConsulta, String motivo) {}
+    public record CitaDetalle(int idCita, int idMedico, String fecha, String hora,
+                             String tipoConsulta, String motivo, String estado,
+                             int numeroModificaciones) {}
 
     @GetMapping("/medicos")
     public ResponseEntity<?> medicos(HttpServletRequest request) {
@@ -78,11 +89,12 @@ public class CitaController {
     @GetMapping("/disponibilidad")
     public ResponseEntity<?> disponibilidad(@RequestParam int idMedico, @RequestParam String fecha,
                                              HttpServletRequest request) {
-        if (pacienteActual(request) == null) return sinSesion();
+        Paciente paciente = pacienteActual(request);
+        if (paciente == null) return sinSesion();
         try {
             LocalDate dia = LocalDate.parse(fecha);
             if (dia.isBefore(LocalDate.now()) || idMedico < 1) return error(HttpStatus.BAD_REQUEST, "Elige una fecha futura.");
-            return ResponseEntity.ok(opciones(idMedico, dia));
+            return ResponseEntity.ok(opciones(idMedico, dia, paciente.getIdPaciente()));
         } catch (DateTimeException error) {
             return error(HttpStatus.BAD_REQUEST, "La fecha no es válida.");
         }
@@ -104,7 +116,7 @@ public class CitaController {
             if (!LocalDateTime.of(fecha, hora).isAfter(LocalDateTime.now())) {
                 return error(HttpStatus.BAD_REQUEST, "Elige un horario futuro.");
             }
-            boolean valido = opciones(nueva.idMedico(), fecha).stream()
+            boolean valido = opciones(nueva.idMedico(), fecha, paciente.getIdPaciente()).stream()
                     .anyMatch(opcion -> opcion.idHorario() == nueva.idHorario() &&
                             opcion.hora().equals(hora.format(HORA)));
             if (!valido) return error(HttpStatus.CONFLICT, "Ese horario ya no está disponible.");
@@ -146,19 +158,54 @@ public class CitaController {
         return ResponseEntity.ok(citas);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> detalle(@PathVariable int id, HttpServletRequest request) {
+        Paciente paciente = pacienteActual(request);
+        if (paciente == null) return sinSesion();
+        var citas = jdbc.query("SELECT id_cita, id_medico, fecha, " +
+                        "TIME_FORMAT(hora,'%H:%i') AS hora, tipo_consulta, motivo, " +
+                        "estado, numero_modificaciones FROM cita " +
+                        "WHERE id_cita=? AND id_paciente=?",
+                (rs, row) -> new CitaDetalle(rs.getInt("id_cita"), rs.getInt("id_medico"),
+                        rs.getDate("fecha").toLocalDate().toString(), rs.getString("hora"),
+                        rs.getString("tipo_consulta"), rs.getString("motivo"),
+                        rs.getString("estado"), rs.getInt("numero_modificaciones")),
+                id, paciente.getIdPaciente());
+        return citas.isEmpty() ? error(HttpStatus.NOT_FOUND, "No encontramos esa cita.")
+                : ResponseEntity.ok(citas.getFirst());
+    }
+
     @PostMapping("/{id}/cancelar")
     public ResponseEntity<?> cancelar(@PathVariable int id, HttpServletRequest request) {
         Paciente paciente = pacienteActual(request);
         if (paciente == null) return sinSesion();
         int cambios = jdbc.update("UPDATE cita SET estado='CANCELADA' " +
                         "WHERE id_cita=? AND id_paciente=? AND estado='RESERVADA' " +
-                        "AND TIMESTAMP(fecha, hora)>CURRENT_TIMESTAMP",
+                        "AND TIMESTAMP(fecha, hora)>=DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 24 HOUR)",
                 id, paciente.getIdPaciente());
         if (cambios == 0) return error(HttpStatus.CONFLICT, "Esta cita no se puede cancelar.");
         return ResponseEntity.noContent().build();
     }
 
-    private List<HorarioOpcion> opciones(int idMedico, LocalDate fecha) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> modificar(@PathVariable int id, @RequestBody CambioCita cambio,
+                                       HttpServletRequest request) {
+        Paciente paciente = pacienteActual(request);
+        if (paciente == null) return sinSesion();
+        if (cambio == null || cambio.fecha() == null || cambio.hora() == null) {
+            return error(HttpStatus.BAD_REQUEST, "Revisa los datos de la cita.");
+        }
+        try {
+            mantenimiento.modificar(id, paciente.getIdPaciente(), cambio.idMedico(),
+                    cambio.idHorario(), LocalDate.parse(cambio.fecha()),
+                    LocalTime.parse(cambio.hora()), cambio.tipoConsulta(), cambio.motivo());
+            return ResponseEntity.noContent().build();
+        } catch (DateTimeException | IllegalArgumentException error) {
+            return error(HttpStatus.CONFLICT, error.getMessage());
+        }
+    }
+
+    private List<HorarioOpcion> opciones(int idMedico, LocalDate fecha, int idPaciente) {
         String dia = DIAS.get(fecha.getDayOfWeek().getValue() - 1);
         List<Map<String, Object>> rangos = jdbc.queryForList(
                 "SELECT h.id_horario, TIME_FORMAT(h.hora_inicio,'%H:%i') AS inicio, " +
@@ -168,8 +215,9 @@ public class CitaController {
                 idMedico, dia);
         Set<String> ocupadas = jdbc.query(
                 "SELECT TIME_FORMAT(hora,'%H:%i') AS hora FROM cita " +
-                "WHERE id_medico=? AND fecha=? AND estado<>'CANCELADA'",
-                (rs, row) -> rs.getString("hora"), idMedico, fecha).stream().collect(Collectors.toSet());
+                "WHERE fecha=? AND estado<>'CANCELADA' AND (id_medico=? OR id_paciente=?)",
+                (rs, row) -> rs.getString("hora"), fecha, idMedico, idPaciente)
+                .stream().collect(Collectors.toSet());
         Map<String, HorarioOpcion> libres = new LinkedHashMap<>();
         for (Map<String, Object> rango : rangos) {
             LocalTime inicio = LocalTime.parse((String) rango.get("inicio"));

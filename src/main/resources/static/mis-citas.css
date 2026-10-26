@@ -10,6 +10,7 @@
 .cita-tarjeta .estado { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: bold; color: #176b87; }
 .cita-tarjeta.cancelada .estado { color: #737b83; }
 .cancelar { border: 1px solid #a63434; color: #a63434; background: white; border-radius: 8px; padding: 10px 16px; cursor: pointer; white-space: nowrap; }
+.modificar { border: 1px solid #176b87; color: #176b87; background: white; border-radius: 8px; padding: 10px 16px; text-decoration: none; white-space: nowrap; }
 .cancelar:hover { background: #fff2f2; }
 .cancelar:disabled { opacity: .5; cursor: wait; }
 .notice { padding: 12px 16px; background: #e7f3f7; color: #176b87; border-radius: 8px; margin-bottom: 18px; }

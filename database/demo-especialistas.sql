@@ -1,4 +1,4 @@
--- Datos ficticios para probar reservas. No crea usuarios ni contraseñas.
+
 -- Requiere database/migrations/001_medicos_sin_cuenta.sql.
 USE clinica_tezza;
 

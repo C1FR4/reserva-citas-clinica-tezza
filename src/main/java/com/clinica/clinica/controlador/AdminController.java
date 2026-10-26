@@ -1,9 +1,13 @@
 package com.clinica.clinica.controlador;
 
 import com.clinica.clinica.servicio.AdminService;
+import com.clinica.clinica.servicio.ReporteCitasService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,9 +16,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class AdminController {
     private final AdminService admin;
+    private final ReporteCitasService reportes;
 
-    public AdminController(AdminService admin) {
+    public AdminController(AdminService admin, ReporteCitasService reportes) {
         this.admin = admin;
+        this.reportes = reportes;
+    }
+
+    @GetMapping("/admin/citas/exportar")
+    public ResponseEntity<byte[]> exportarCitas(HttpSession session) {
+        if (!esAdministrador(session)) return ResponseEntity.status(403).build();
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=tezza-citas.xlsx")
+                .body(reportes.exportar());
     }
 
     @GetMapping("/admin")
@@ -81,6 +97,19 @@ public class AdminController {
             mensajes.addFlashAttribute("mensajeError", error.getMessage());
         }
         return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/citas/eliminar")
+    public String eliminarCitaCancelada(@RequestParam int idCita, RedirectAttributes mensajes,
+                                       HttpSession session) {
+        if (!esAdministrador(session)) return "redirect:/InicioSesion.html";
+        try {
+            admin.eliminarCitaCancelada(idCita);
+            mensajes.addFlashAttribute("mensajeExito", "Cita cancelada eliminada definitivamente.");
+        } catch (IllegalArgumentException error) {
+            mensajes.addFlashAttribute("mensajeError", error.getMessage());
+        }
+        return "redirect:/admin#citas";
     }
 
     private boolean esAdministrador(HttpSession session) {

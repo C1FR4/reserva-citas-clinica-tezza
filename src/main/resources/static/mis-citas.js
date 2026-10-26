@@ -46,7 +46,12 @@ async function cargarCitas() {
       estado.textContent = cita.estado;
       datos.append(titulo, medico, fecha, tipo, estado);
       tarjeta.append(datos);
-      if (cita.estado === 'RESERVADA' && fechaCita(cita) > new Date()) {
+      if (cita.estado === 'RESERVADA' && fechaCita(cita).getTime() - Date.now() >= 86400000) {
+        const modificar = document.createElement('a');
+        modificar.className = 'modificar';
+        modificar.href = `/ReservarCita.html?editar=${cita.idCita}`;
+        modificar.textContent = 'Modificar cita';
+        tarjeta.append(modificar);
         const cancelar = document.createElement('button');
         cancelar.type = 'button';
         cancelar.className = 'cancelar';
@@ -80,6 +85,7 @@ async function iniciar() {
   document.querySelector('#patient-name').textContent = `${patient.nombre} ${patient.apellido}`;
   document.querySelector('#avatar').textContent = patient.nombre.slice(0, 1).toUpperCase();
   if (new URLSearchParams(window.location.search).has('reservada')) aviso('Tu cita fue reservada correctamente.');
+  if (new URLSearchParams(window.location.search).has('modificada')) aviso('Tu cita fue modificada correctamente.');
   await cargarCitas();
 }
 

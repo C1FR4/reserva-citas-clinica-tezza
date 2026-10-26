@@ -1,6 +1,8 @@
 package com.clinica.clinica.servicio;
 
 import com.clinica.clinica.modelo.Medico;
+import com.google.common.base.CharMatcher;
+import org.apache.commons.validator.routines.EmailValidator;
 import com.clinica.clinica.repositorio.MedicoRepository;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -46,7 +48,7 @@ public class AdminService {
 
     public List<Map<String, Object>> citas() {
         return jdbc.queryForList("SELECT c.id_cita, DATE_FORMAT(c.fecha,'%d/%m/%Y') AS fecha, " +
-                "TIME_FORMAT(c.hora,'%H:%i') AS hora, c.estado, c.tipo_consulta, " +
+                "TIME_FORMAT(c.hora,'%H:%i') AS hora, c.estado, c.asistencia, c.tipo_consulta, " +
                 "CONCAT(p.nombre,' ',p.apellido) AS paciente, p.dni AS dni_paciente, " +
                 "CONCAT(m.nombre,' ',m.apellido) AS medico, m.especialidad " +
                 "FROM cita c JOIN paciente p ON p.id_paciente=c.id_paciente " +
@@ -67,7 +69,8 @@ public class AdminService {
         correo = obligatorio(correo, "correo", 120).toLowerCase();
         dni = obligatorio(dni, "DNI", 8);
         if (!dni.matches("[0-9]{8}")) throw new IllegalArgumentException("El DNI debe tener 8 dígitos.");
-        if (!correo.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+        if (!EmailValidator.getInstance().isValid(correo)
+                && !correo.matches("^[^@\\s]+@tezza\\.test$")) {
             throw new IllegalArgumentException("Ingresa un correo válido.");
         }
         if (telefono != null && telefono.trim().length() > 20) {
@@ -142,11 +145,19 @@ public class AdminService {
         }
     }
 
+    @Transactional
+    public void eliminarCitaCancelada(int idCita) {
+        int cambios = jdbc.update("DELETE FROM cita WHERE id_cita=? AND estado='CANCELADA'", idCita);
+        if (cambios == 0) {
+            throw new IllegalArgumentException("Solo se pueden eliminar físicamente citas canceladas.");
+        }
+    }
+
     private String obligatorio(String valor, String campo, int maximo) {
-        if (valor == null || valor.isBlank() || valor.trim().length() > maximo) {
+        if (valor == null || valor.isBlank() || CharMatcher.whitespace().trimFrom(valor).length() > maximo) {
             throw new IllegalArgumentException("Revisa el campo " + campo + ".");
         }
-        return valor.trim();
+        return CharMatcher.whitespace().trimFrom(valor);
     }
 
     private String vacioANulo(String valor) {

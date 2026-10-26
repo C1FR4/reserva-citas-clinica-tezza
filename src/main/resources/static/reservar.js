@@ -10,6 +10,7 @@ const dias = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'S
 const nombresDias = { MIERCOLES: 'miércoles', SABADO: 'sábado' };
 let especialistas = [];
 let consultaActual = 0;
+let citaEditando = null;
 
 function fechaLocal(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -117,12 +118,29 @@ async function iniciar() {
   for (const opcion of especialistas) {
     medico.add(new Option(`${opcion.nombre} · ${opcion.especialidad}`, opcion.idMedico));
   }
-  const medicoSolicitado = new URLSearchParams(window.location.search).get('medico');
-  const elegido = especialistas.find((opcion) => String(opcion.idMedico) === medicoSolicitado) || especialistas[0];
+  const parametros = new URLSearchParams(window.location.search);
+  const editar = parametros.get('editar');
+  if (editar) {
+    const detalle = await fetch(`/api/citas/${encodeURIComponent(editar)}`);
+    if (!detalle.ok) throw new Error('No encontramos la cita que quieres modificar.');
+    citaEditando = await detalle.json();
+    if (citaEditando.estado !== 'RESERVADA' || citaEditando.numeroModificaciones >= 2 ||
+        new Date(`${citaEditando.fecha}T${citaEditando.hora}:00`).getTime() - Date.now() < 86400000) {
+      throw new Error('Esta cita ya no se puede modificar.');
+    }
+    document.title = 'Modificar cita | Clínica Tezza';
+    document.querySelector('#booking-button').firstChild.textContent = 'Guardar cambios ';
+  }
+  const medicoSolicitado = citaEditando?.idMedico || parametros.get('medico');
+  const elegido = especialistas.find((opcion) => String(opcion.idMedico) === String(medicoSolicitado)) || especialistas[0];
   if (!elegido) return mostrarError('Todavía no hay especialistas con horarios disponibles.');
   medico.value = String(elegido.idMedico);
   actualizarEspecialista();
-  fecha.value = proximaFechaConAtencion(elegido);
+  fecha.value = citaEditando?.fecha || proximaFechaConAtencion(elegido);
+  if (citaEditando) {
+    document.querySelector('#tipoConsulta').value = citaEditando.tipoConsulta;
+    document.querySelector('#motivo').value = citaEditando.motivo || '';
+  }
   await cargarHorarios();
 }
 
@@ -136,8 +154,8 @@ form.addEventListener('submit', async (event) => {
   button.disabled = true;
   mostrarError('');
   try {
-    const response = await fetch('/api/citas', {
-      method: 'POST',
+    const response = await fetch(citaEditando ? `/api/citas/${citaEditando.idCita}` : '/api/citas', {
+      method: citaEditando ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         idMedico: Number(medico.value),
@@ -149,8 +167,12 @@ form.addEventListener('submit', async (event) => {
       }),
     });
     if (response.status === 401) return window.location.replace('/InicioSesion.html');
+    if (!response.ok) {
+      const result = await response.json();
+      throw new Error(result.error || 'No se pudo guardar la cita.');
+    }
+    if (citaEditando) return window.location.assign('/MisCitas.html?modificada=1');
     const result = await response.json();
-    if (!response.ok) throw new Error(result.error || 'No se pudo reservar la cita.');
     window.location.assign(`/MisCitas.html?reservada=${result.idCita}`);
   } catch (error) {
     await cargarHorarios();
