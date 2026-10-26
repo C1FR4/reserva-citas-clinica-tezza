@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Detalle de cita | Clínica Tezza</title>
+  <link rel="stylesheet" href="/medico.css" />
+  <script src="/medico.js" defer></script>
+</head>
+<body>
+  <header class="barra"><a href="/medico" class="marca">CLÍNICA TEZZA <small>Panel médico</small></a><button id="cerrarSesion" type="button">Cerrar sesión</button></header>
+  <main>
+    <a class="volver" href="/medico">← Volver a mis citas</a>
+    <section class="cabecera"><span>DETALLE DE CITA</span><h1 th:text="${cita.paciente}">Paciente</h1><p>Información de la reserva y registro de asistencia.</p></section>
+    <p class="aviso exito" th:if="${mensajeExito}" th:text="${mensajeExito}" role="status"></p>
+    <p class="aviso error" th:if="${mensajeError}" th:text="${mensajeError}" role="alert"></p>
+    <section class="tarjeta"><h2>Datos de la cita</h2><dl class="detalle">
+      <div><dt>DNI</dt><dd th:text="${cita.dni}">DNI</dd></div><div><dt>Fecha</dt><dd th:text="${cita.fecha}">Fecha</dd></div>
+      <div><dt>Hora</dt><dd th:text="${cita.hora}">Hora</dd></div><div><dt>Tipo de consulta</dt><dd th:text="${cita.tipo_consulta}">Tipo</dd></div>
+      <div><dt>Especialidad</dt><dd th:text="${cita.especialidad}">Especialidad</dd></div><div><dt>Estado</dt><dd th:text="${cita.estado}">Estado</dd></div>
+      <div><dt>Motivo</dt><dd th:text="${#strings.isEmpty(cita.motivo) ? 'No indicado' : cita.motivo}">Motivo</dd></div><div><dt>Asistencia</dt><dd th:text="${cita.asistencia}">Pendiente</dd></div>
+    </dl></section>
+    <section class="tarjeta" th:if="${puedeRegistrar}"><h2>Registrar asistencia</h2><p>Selecciona el resultado de la atención. Este registro se guarda en la cita.</p>
+      <form th:action="@{/medico/citas/{id}/asistencia(id=${cita.id_cita})}" method="post" class="form-asistencia">
+        <label><input type="radio" name="asistencia" value="ASISTIO" required /> El paciente asistió</label>
+        <label><input type="radio" name="asistencia" value="NO_ASISTIO" required /> El paciente no asistió</label>
+        <button type="submit">Guardar asistencia</button>
+      </form>
+    </section>
+    <section class="tarjeta" th:unless="${puedeRegistrar}"><h2>Registro de asistencia</h2><p th:if="${cita.asistencia != 'PENDIENTE'}">La asistencia de esta cita ya fue registrada.</p><p th:if="${cita.asistencia == 'PENDIENTE'}">Podrás registrar la asistencia cuando comience la cita, siempre que siga activa.</p></section>
+  </main>
+</body>
+</html>

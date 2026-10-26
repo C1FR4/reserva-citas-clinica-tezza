@@ -17,3 +17,9 @@ Thumbs.db
 .env
 target/
 node_modules/
+_trabajo_apf3/
+*.local
+*.exe
+*.msi
+*.dll
+*.jar

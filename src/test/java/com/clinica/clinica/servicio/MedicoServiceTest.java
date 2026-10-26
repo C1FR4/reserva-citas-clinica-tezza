@@ -25,13 +25,13 @@ class MedicoServiceTest {
         when(usuarios.findByNombreUsuario("medico@tezza.test")).thenReturn(Optional.empty());
         when(usuarios.save(any(Usuario.class))).thenAnswer(call -> call.getArgument(0));
 
-        new MedicoService(usuarios, medicos, encoder).registrarMedico(
-                new Medico(), "MEDICO@TEZZA.TEST", "ClaveSegura123");
+        new MedicoService(usuarios, medicos, encoder, new PoliticaContrasena()).registrarMedico(
+                new Medico(), "MEDICO@TEZZA.TEST", "ClaveSegura123!");
 
         var captor = ArgumentCaptor.forClass(Usuario.class);
         verify(usuarios).save(captor.capture());
         verify(medicos).save(any(Medico.class));
-        assertNotEquals("ClaveSegura123", captor.getValue().getContrasena());
-        assertTrue(encoder.matches("ClaveSegura123", captor.getValue().getContrasena()));
+        assertNotEquals("ClaveSegura123!", captor.getValue().getContrasena());
+        assertTrue(encoder.matches("ClaveSegura123!", captor.getValue().getContrasena()));
     }
 }

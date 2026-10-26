@@ -20,45 +20,46 @@ public class SeedMedicoDemo implements CommandLineRunner {
     private final MedicoRepository medicos;
     private final JdbcTemplate jdbc;
     private final BCryptPasswordEncoder encoder;
+    private final PoliticaContrasena politica;
 
     @Value("${SEED_ADMIN_PASSWORD:}") private String adminPassword;
 
     public SeedMedicoDemo(UsuarioRepository usuarios, MedicoRepository medicos,
-                          JdbcTemplate jdbc, BCryptPasswordEncoder encoder) {
+                          JdbcTemplate jdbc, BCryptPasswordEncoder encoder,
+                          PoliticaContrasena politica) {
         this.usuarios = usuarios;
         this.medicos = medicos;
         this.jdbc = jdbc;
         this.encoder = encoder;
+        this.politica = politica;
     }
 
     @Override
     @Transactional
     public void run(String... args) {
-        Usuario usuario = usuarios.findByNombreUsuario("admin").orElse(null);
-        if (usuario == null) {
-            if (adminPassword.length() < 8) {
-                throw new IllegalArgumentException("Configura SEED_ADMIN_PASSWORD (8+).");
+        Usuario admin = usuarios.findByNombreUsuario("admin").orElse(null);
+        if (admin == null) {
+            if (!politica.esValida(adminPassword)) {
+                throw new IllegalArgumentException("SEED_ADMIN_PASSWORD exige 8+ caracteres, minúscula, mayúscula, dígito y símbolo.");
             }
-            usuario = new Usuario();
-            usuario.setNombreUsuario("admin");
-            usuario.setContrasena(encoder.encode(adminPassword));
-            usuario.setRol("ADMINISTRADOR");
-            usuario = usuarios.saveAndFlush(usuario);
+            admin = new Usuario();
+            admin.setNombreUsuario("admin");
+            admin.setContrasena(encoder.encode(adminPassword));
+            admin.setRol("ADMINISTRADOR");
+            admin = usuarios.saveAndFlush(admin);
         }
-        if (!"ADMINISTRADOR".equals(usuario.getRol())) {
+        if (!"ADMINISTRADOR".equals(admin.getRol())) {
             throw new IllegalStateException("La cuenta admin tiene un rol incorrecto.");
         }
         Integer registrosAdmin = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM administrador WHERE id_usuario=?", Integer.class,
-                usuario.getIdUsuario());
+                admin.getIdUsuario());
         if (registrosAdmin == 0) {
             jdbc.update("INSERT INTO administrador (nombre, apellido, correo, id_usuario) " +
-                    "VALUES ('Jorge', 'Pérez Castillo', 'admin@tezza.test', ?)", usuario.getIdUsuario());
+                    "VALUES ('Jorge', 'Pérez Castillo', 'admin@tezza.test', ?)", admin.getIdUsuario());
         }
-        Integer registrosMedico = jdbc.queryForObject(
-                "SELECT COUNT(*) FROM medico WHERE id_usuario=?", Integer.class,
-                usuario.getIdUsuario());
-        if (registrosMedico > 0) return;
+        jdbc.update("UPDATE medico SET id_usuario=NULL WHERE id_usuario=?", admin.getIdUsuario());
+        if (medicos.findByDni("87654321").isPresent()) return;
 
         Medico medico = new Medico();
         medico.setNombre("Jorge");
@@ -68,7 +69,6 @@ public class SeedMedicoDemo implements CommandLineRunner {
         medico.setDni("87654321");
         medico.setEstado("ACTIVO");
         medico.setAniosExperiencia((short) 10);
-        medico.setUsuario(usuario);
         medico = medicos.saveAndFlush(medico);
 
         for (String dia : List.of("LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES")) {

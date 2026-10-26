@@ -16,15 +16,18 @@ public class MedicoService {
     private final UsuarioRepository usuarioRepository;
     private final MedicoRepository medicoRepository;
     private final BCryptPasswordEncoder encoder;
+    private final PoliticaContrasena politica;
 
     public MedicoService(
             UsuarioRepository usuarioRepository,
             MedicoRepository medicoRepository,
-            BCryptPasswordEncoder encoder) {
+            BCryptPasswordEncoder encoder,
+            PoliticaContrasena politica) {
 
         this.usuarioRepository = usuarioRepository;
         this.medicoRepository = medicoRepository;
         this.encoder = encoder;
+        this.politica = politica;
     }
 
     @Transactional
@@ -34,10 +37,10 @@ public class MedicoService {
             String contrasena) {
 
         // Validar la contraseña
-        if (!esContrasenaValida(contrasena)) {
+        if (!politica.esValida(contrasena)) {
             throw new IllegalArgumentException(
                     "La contraseña debe tener al menos 8 caracteres, "
-                            + "una minúscula y una mayúscula.");
+                            + "una minúscula, una mayúscula, un dígito y un símbolo.");
         }
 
         // Validar el nombre de usuario
@@ -68,27 +71,4 @@ public class MedicoService {
         medicoRepository.save(medico);
     }
 
-    // Validar longitud, minúsculas y mayúsculas
-    private boolean esContrasenaValida(String contrasena) {
-
-        if (contrasena == null || contrasena.length() < 8) {
-            return false;
-        }
-
-        boolean tieneMinuscula = false;
-        boolean tieneMayuscula = false;
-
-        for (char caracter : contrasena.toCharArray()) {
-
-            if (Character.isLowerCase(caracter)) {
-                tieneMinuscula = true;
-            }
-
-            if (Character.isUpperCase(caracter)) {
-                tieneMayuscula = true;
-            }
-        }
-
-        return tieneMinuscula && tieneMayuscula;
-    }
 }

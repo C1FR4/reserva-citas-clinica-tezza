@@ -1,12 +1,16 @@
 package com.clinica.clinica.controlador;
 
 import com.clinica.clinica.modelo.Paciente;
+import com.clinica.clinica.modelo.Medico;
 import com.clinica.clinica.modelo.Usuario;
 import com.clinica.clinica.repositorio.PacienteRepository;
+import com.clinica.clinica.repositorio.MedicoRepository;
 import com.clinica.clinica.repositorio.UsuarioRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,15 +23,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 public class LoginController {
+    private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
     private final UsuarioRepository usuarios;
     private final PacienteRepository pacientes;
+    private final MedicoRepository medicos;
     private final BCryptPasswordEncoder encoder;
 
     public LoginController(UsuarioRepository usuarios, PacienteRepository pacientes,
+                           MedicoRepository medicos,
                            BCryptPasswordEncoder encoder) {
         this.usuarios = usuarios;
         this.pacientes = pacientes;
+        this.medicos = medicos;
         this.encoder = encoder;
     }
 
@@ -47,8 +55,9 @@ public class LoginController {
         Usuario usuario = usuarios.findByNombreUsuario(credenciales.email().trim().toLowerCase())
                 .orElse(null);
         if (usuario == null || !("PACIENTE".equals(usuario.getRol()) ||
-            "ADMINISTRADOR".equals(usuario.getRol())) ||
+            "ADMINISTRADOR".equals(usuario.getRol()) || "MEDICO".equals(usuario.getRol())) ||
             !encoder.matches(credenciales.password(), usuario.getContrasena())) {
+            LOG.warn("Intento de acceso rechazado por credenciales inválidas");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Credenciales incorrectas."));
         }
@@ -58,14 +67,21 @@ public class LoginController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Credenciales incorrectas."));
         }
+        Medico medico = "MEDICO".equals(usuario.getRol())
+                ? medicos.findByUsuario_IdUsuario(usuario.getIdUsuario()).orElse(null) : null;
+        if ("MEDICO".equals(usuario.getRol()) && (medico == null || !"ACTIVO".equals(medico.getEstado()))) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Credenciales incorrectas."));
+        }
 
         HttpSession sesion = request.getSession(false);
         if (sesion != null) sesion.invalidate();
         sesion = request.getSession(true);
         sesion.setAttribute("usuarioId", usuario.getIdUsuario());
         sesion.setAttribute("rol", usuario.getRol());
+        LOG.info("Acceso autorizado para rol {}", usuario.getRol());
         return ResponseEntity.ok(new Acceso("ADMINISTRADOR".equals(usuario.getRol())
-                ? "/admin" : "/PantallaPrincipal.html"));
+                ? "/admin" : "MEDICO".equals(usuario.getRol()) ? "/medico" : "/PantallaPrincipal.html"));
     }
 
     @GetMapping("/me")

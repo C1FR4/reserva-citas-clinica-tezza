@@ -4,7 +4,7 @@
 
 Esta rama integra el proyecto Spring Boot iniciado por una compañera con las pantallas HTML/CSS existentes. Ya funciona el acceso de pacientes con contraseña BCrypt y sesión HTTP, además de la consulta, reserva y cancelación de citas vinculadas a MySQL. El panel y la página de especialistas muestran datos reales. El panel administrativo cubre la consulta de citas, la gestión de perfiles médicos y la asignación de horarios.
 
-El acceso de `admin` utiliza el mismo formulario de inicio de sesión y abre `/admin`. El panel administrativo permite consultar citas de toda la clínica, registrar y editar perfiles médicos, cambiar su estado, y asignar o retirar horarios. El alta de un médico en este panel no crea otra cuenta: así las dos cuentas de demostración siguen siendo `usuariotest` y `admin`. Los horarios con citas asociadas no se pueden retirar, y un médico con citas futuras no se puede desactivar hasta resolverlas.
+El acceso de `admin` utiliza el mismo formulario de inicio de sesión y abre `/admin`. El panel administrativo permite consultar citas de toda la clínica, registrar y editar perfiles médicos, cambiar su estado, asignar o retirar horarios. El alta de un perfil médico no crea una cuenta automáticamente. Para probar el rol médico se habilita una única cuenta `medicotest`, vinculada a un perfil existente. Los horarios con citas asociadas no se pueden retirar, y un médico con citas futuras no se puede desactivar hasta resolverlas.
 
 ## Estructura del proyecto
 
@@ -14,7 +14,7 @@ Las cinco dependencias principales son Spring Web MVC, Spring Data JPA, Thymelea
 
 El archivo `database/schema.sql` es una copia **idéntica** del DDL validado en el informe APF3. El archivo `script-prueba-incompleto.sql` recibido con el avance de la compañera no se ejecuta: define solo dos tablas, usa nombres/rol distintos y guarda una contraseña sin cifrar.
 
-Para el avance de reserva se agregó `database/migrations/001_medicos_sin_cuenta.sql`. Esta migración permite que un perfil médico de demostración tenga `id_usuario` nulo, sin crear nuevas cuentas de acceso. Es el único cambio respecto al DDL del informe: las siete tablas, claves y relaciones permanecen. Tras aplicarla, `database/demo-especialistas.sql` agrega tres especialistas ficticios y sus turnos de forma idempotente. Las cuentas de prueba siguen siendo solo `usuariotest` y `admin`.
+Para el avance de reserva se agregó `database/migrations/001_medicos_sin_cuenta.sql`. Esta migración permite que un perfil médico de demostración tenga `id_usuario` nulo, sin crear nuevas cuentas de acceso. Es el único cambio respecto al DDL base del informe: las siete tablas, claves y relaciones permanecen. Tras aplicarla, `database/demo-especialistas.sql` agrega tres especialistas ficticios y sus turnos de forma idempotente. Las cuentas de prueba son `usuariotest`, `admin` y `medicotest`.
 
 ## Requisitos
 
@@ -49,12 +49,12 @@ Para comprobar la conexión, el inicio de Spring valida las entidades contra el 
 
 ## Crear un paciente de prueba
 
-Después de ejecutar el DDL, puedes iniciar una vez el perfil `seed`. Inserta `usuariotest` como paciente y `admin` como administrador, además de un médico con horarios de lunes a viernes de 08:00 a 13:00 si aún no existen. Antes de aplicar la migración de médicos sin cuenta, el médico de demostración comparte la fila `admin` en `usuario` para respetar el DDL original; después, los nuevos perfiles médicos no requieren usuario propio. Ambas contraseñas se cifran con BCrypt. Usa un DNI de prueba de ocho dígitos que no esté repetido.
+Después de ejecutar el DDL, aplica `database/migrations/001_medicos_sin_cuenta.sql` y luego inicia una vez el perfil `seed`. Inserta `usuariotest` como paciente y `admin` como administrador, además de un médico sin cuenta de acceso y con horarios de lunes a viernes de 08:00 a 13:00 si aún no existe. El seed también elimina un posible vínculo antiguo entre `admin` y un perfil médico. Ambas contraseñas se cifran con BCrypt. Usa un DNI de prueba de ocho dígitos que no esté repetido.
 
 ```powershell
 $env:SEED_EMAIL = 'usuariotest'
-$env:SEED_PASSWORD = Read-Host 'Clave de prueba (mínimo 8 caracteres)' -MaskInput
-$env:SEED_ADMIN_PASSWORD = Read-Host 'Clave del administrador (mínimo 8 caracteres)' -MaskInput
+$env:SEED_PASSWORD = Read-Host 'Clave de prueba (8 caracteres, minúscula, mayúscula, dígito y símbolo)' -MaskInput
+$env:SEED_ADMIN_PASSWORD = Read-Host 'Clave del administrador (8 caracteres, minúscula, mayúscula, dígito y símbolo)' -MaskInput
 $env:SEED_NOMBRE = 'Usuario'
 $env:SEED_APELLIDO = 'Test'
 $env:SEED_DNI = '12345678'
@@ -65,14 +65,25 @@ $env:SEED_GENERO = 'FEMENINO'
 
 Cuando termine el perfil `seed`, detén el servidor y vuelve a iniciarlo sin ese perfil. Elimina las variables temporales con `Remove-Item Env:SEED_PASSWORD, Env:SEED_ADMIN_PASSWORD`.
 
-Para mostrar cuatro especialistas sin crear más cuentas, ejecuta después estos archivos en MySQL Workbench o con el cliente `mysql`, en este orden:
+Para mostrar cuatro especialistas sin crear más cuentas, ejecuta después el script de demostración en MySQL Workbench o con el cliente `mysql`:
 
 ```text
-database/migrations/001_medicos_sin_cuenta.sql
 database/demo-especialistas.sql
 ```
 
-El segundo script se puede volver a ejecutar: identifica los médicos por correo y evita repetir los turnos. La pantalla **Especialistas** muestra los días y horas de cada uno; **Reservar cita** propone la próxima fecha en que atiende el médico elegido y permite cambiarla.
+El script se puede volver a ejecutar: identifica los médicos por correo y evita repetir los turnos. Si reutilizas una base creada con el seed antiguo, ejecuta también `database/migrations/002_desvincular_admin_medico.sql` para retirar el vínculo provisional previo; en una base nueva no hace falta. La pantalla **Especialistas** muestra los días y horas de cada uno; **Reservar cita** propone la próxima fecha en que atiende el médico elegido y permite cambiarla.
+
+## Cuenta médica de demostración
+
+Después de cargar los especialistas, vincula una sola cuenta `medicotest` a un médico existente. El DNI `87654324` corresponde al perfil de Ana Vargas en los datos de demostración. La clave queda cifrada con BCrypt. El perfil se ejecuta una vez, sin servidor web:
+
+```powershell
+$env:SEED_MEDICO_DNI = '87654324'
+$env:SEED_MEDICO_PASSWORD = Read-Host 'Clave de medicotest (8 caracteres, minúscula, mayúscula, dígito y símbolo)' -MaskInput
+.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=seed-medico' '-Dspring-boot.run.arguments=--spring.main.web-application-type=none'
+```
+
+Inicia después la aplicación sin ese perfil. `medicotest` abre `/medico`, consulta únicamente sus citas y puede registrar asistencia cuando comienza una cita activa. Los controladores y el servicio verifican que la cita pertenece al médico autenticado.
 
 ## Comprobación del flujo
 
@@ -92,5 +103,5 @@ Pruebas automáticas del controlador:
 ## Alcance pendiente
 
 - La reserva usa espacios de 30 minutos dentro de los rangos de `horario`. El DDL impide que dos citas activas ocupen el mismo espacio del médico o del paciente.
-- El panel administrativo gestiona perfiles médicos sin cuentas adicionales; la cuenta y la pantalla del rol médico corresponden a un avance posterior.
+- La agenda del médico y el registro de asistencia están implementados en esta rama. La creación pública de cuentas de pacientes, la confirmación y el envío de recordatorios siguen pendientes.
 - La integración con MySQL 8.4.11 se verificó localmente el 21/10/2026 con el DDL de siete tablas: arranque con `ddl-auto=validate`, creación de un paciente de prueba, login, lectura del panel y cierre de sesión. En otra máquina se debe configurar su propia instancia MySQL y las variables `DB_*`.

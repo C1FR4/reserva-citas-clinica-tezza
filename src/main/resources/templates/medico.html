@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agenda médica | Clínica Tezza</title>
+  <link rel="stylesheet" href="/medico.css" />
+  <script src="/medico.js" defer></script>
+</head>
+<body>
+  <header class="barra"><a href="/medico" class="marca">CLÍNICA TEZZA <small>Panel médico</small></a><button id="cerrarSesion" type="button">Cerrar sesión</button></header>
+  <main>
+    <section class="cabecera"><span>AGENDA MÉDICA</span><h1 th:text="|Bienvenido, Dr(a). ${medico.nombre} ${medico.apellido}|">Bienvenido</h1><p>Consulta tus citas asignadas y registra la asistencia después de la atención.</p></section>
+    <section class="tarjeta">
+      <div class="titulo-fila"><div><h2>Mis citas médicas</h2><p>Especialidad: <strong th:text="${medico.especialidad}">Especialidad</strong></p></div><input id="buscarCita" type="search" placeholder="Buscar paciente o DNI" aria-label="Buscar cita" /></div>
+      <div class="tabla-scroll"><table id="tablaCitas"><thead><tr><th>Fecha</th><th>Hora</th><th>Paciente</th><th>Tipo</th><th>Estado</th><th>Asistencia</th><th>Detalle</th></tr></thead><tbody>
+        <tr th:each="cita : ${citas}"><td th:text="${cita.fecha}">Fecha</td><td th:text="${cita.hora}">Hora</td><td><strong th:text="${cita.paciente}">Paciente</strong><small th:text="|DNI ${cita.dni}|">DNI</small></td><td th:text="${cita.tipo_consulta}">Tipo</td><td><span class="etiqueta" th:text="${cita.estado}">Estado</span></td><td th:text="${cita.asistencia}">Pendiente</td><td><a th:href="@{/medico/citas/{id}(id=${cita.id_cita})}">Ver detalle</a></td></tr>
+        <tr th:if="${#lists.isEmpty(citas)}"><td colspan="7" class="vacio">Aún no tienes citas asignadas.</td></tr>
+      </tbody></table></div>
+    </section>
+  </main>
+</body>
+</html>

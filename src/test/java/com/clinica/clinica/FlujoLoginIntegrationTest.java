@@ -64,6 +64,9 @@ class FlujoLoginIntegrationTest {
         mvc.perform(get("/admin"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/InicioSesion.html"));
+        mvc.perform(get("/medico"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/InicioSesion.html"));
 
         var login = mvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -77,6 +80,9 @@ class FlujoLoginIntegrationTest {
                 .andExpect(jsonPath("$.nombre").value("Ana"));
         mvc.perform(get("/PantallaPrincipal.html").session(session))
                 .andExpect(status().isOk());
+        mvc.perform(get("/medico").session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/InicioSesion.html"));
         mvc.perform(get("/ReservarCita.html").session(session))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Especialista.html?v=3")));

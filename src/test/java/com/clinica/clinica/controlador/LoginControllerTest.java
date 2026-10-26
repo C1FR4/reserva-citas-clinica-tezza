@@ -7,8 +7,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.clinica.clinica.modelo.Paciente;
+import com.clinica.clinica.modelo.Medico;
 import com.clinica.clinica.modelo.Usuario;
 import com.clinica.clinica.repositorio.PacienteRepository;
+import com.clinica.clinica.repositorio.MedicoRepository;
 import com.clinica.clinica.repositorio.UsuarioRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 class LoginControllerTest {
     private UsuarioRepository usuarios;
     private PacienteRepository pacientes;
+    private MedicoRepository medicos;
     private LoginController controller;
     private Usuario usuario;
     private Paciente paciente;
@@ -28,8 +31,9 @@ class LoginControllerTest {
     void preparar() {
         usuarios = mock(UsuarioRepository.class);
         pacientes = mock(PacienteRepository.class);
+        medicos = mock(MedicoRepository.class);
         var encoder = new BCryptPasswordEncoder(4);
-        controller = new LoginController(usuarios, pacientes, encoder);
+        controller = new LoginController(usuarios, pacientes, medicos, encoder);
         usuario = new Usuario();
         usuario.setIdUsuario(7);
         usuario.setNombreUsuario("ana@tezza.test");
@@ -77,5 +81,29 @@ class LoginControllerTest {
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals("/admin", ((LoginController.Acceso) result.getBody()).destino());
         assertEquals("ADMINISTRADOR", request.getSession(false).getAttribute("rol"));
+    }
+
+    @Test
+    void medicoActivoAccedeASuAgenda() {
+        usuario.setRol("MEDICO");
+        var medico = new Medico();
+        medico.setEstado("ACTIVO");
+        when(medicos.findByUsuario_IdUsuario(7)).thenReturn(Optional.of(medico));
+        var request = new MockHttpServletRequest();
+        var result = controller.iniciarSesion(
+                new LoginController.Credenciales("ana@tezza.test", "ClaveSegura123"), request);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("/medico", ((LoginController.Acceso) result.getBody()).destino());
+        assertEquals("MEDICO", request.getSession(false).getAttribute("rol"));
+    }
+
+    @Test
+    void medicoSinPerfilNoPuedeEntrar() {
+        usuario.setRol("MEDICO");
+        var request = new MockHttpServletRequest();
+        var result = controller.iniciarSesion(
+                new LoginController.Credenciales("ana@tezza.test", "ClaveSegura123"), request);
+        assertEquals(HttpStatus.UNAUTHORIZED, result.getStatusCode());
+        assertNull(request.getSession(false));
     }
 }
