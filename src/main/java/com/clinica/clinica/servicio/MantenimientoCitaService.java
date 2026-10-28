@@ -15,12 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 /** Actualiza reservas propias con controles de cupo y anticipación. */
 @Service
 public class MantenimientoCitaService {
+    private final org.springframework.context.ApplicationEventPublisher eventos;
     private static final List<String> DIAS = List.of("LUNES", "MARTES", "MIERCOLES",
             "JUEVES", "VIERNES", "SABADO", "DOMINGO");
     private final JdbcTemplate jdbc;
 
-    public MantenimientoCitaService(JdbcTemplate jdbc) {
+    public MantenimientoCitaService(JdbcTemplate jdbc, org.springframework.context.ApplicationEventPublisher eventos) {
         this.jdbc = jdbc;
+        this.eventos = eventos;
     }
 
     @Transactional
@@ -67,6 +69,7 @@ public class MantenimientoCitaService {
                     "AND numero_modificaciones<2 AND TIMESTAMP(fecha,hora)>=DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 24 HOUR)",
                     fecha, hora, idMedico, idHorario, tipoConsulta, motivo, idCita, idPaciente);
             if (cambios == 0) throw new IllegalArgumentException("La cita cambió; vuelve a consultar tus reservas.");
+            eventos.publishEvent(new CitaNotificable(idCita, CitaNotificable.CAMBIO));
         } catch (DataIntegrityViolationException error) {
             throw new IllegalArgumentException("El nuevo espacio ya está ocupado.");
         }

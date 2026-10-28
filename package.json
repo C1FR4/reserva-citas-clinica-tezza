@@ -2,6 +2,6 @@
   "name": "clinica-tezza-herramientas-front",
   "private": true,
   "scripts": {
-    "check:js": "node --check src/main/resources/static/login.js && node --check src/main/resources/static/panel.js && node --check src/main/resources/static/reservar.js && node --check src/main/resources/static/mis-citas.js && node --check src/main/resources/static/especialistas.js && node --check src/main/resources/static/admin.js && node --check src/main/resources/static/medico.js"
+    "check:js": "node --check src/main/resources/static/login.js && node --check src/main/resources/static/registro.js && node --check src/main/resources/static/panel.js && node --check src/main/resources/static/reservar.js && node --check src/main/resources/static/mis-citas.js && node --check src/main/resources/static/especialistas.js && node --check src/main/resources/static/admin.js && node --check src/main/resources/static/medico.js"
   }
 }

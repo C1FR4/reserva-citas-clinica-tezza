@@ -22,7 +22,7 @@ class MantenimientoCitaServiceTest {
         var jdbc = mock(JdbcTemplate.class);
         when(jdbc.queryForList(anyString(), eq(7), eq(3))).thenReturn(List.of());
 
-        assertThrows(IllegalArgumentException.class, () -> new MantenimientoCitaService(jdbc)
+        assertThrows(IllegalArgumentException.class, () -> new MantenimientoCitaService(jdbc, evento -> {})
                 .modificar(7, 3, 2, 4, LocalDate.now().plusDays(3),
                         LocalTime.of(9, 0), "PRESENCIAL", null));
     }
@@ -35,7 +35,7 @@ class MantenimientoCitaServiceTest {
                 "fecha", Date.valueOf(fecha), "hora", Time.valueOf("09:00:00"),
                 "estado", "RESERVADA", "numero_modificaciones", 2)));
 
-        assertThrows(IllegalArgumentException.class, () -> new MantenimientoCitaService(jdbc)
+        assertThrows(IllegalArgumentException.class, () -> new MantenimientoCitaService(jdbc, evento -> {})
                 .modificar(7, 3, 2, 4, fecha, LocalTime.of(10, 0), "VIRTUAL", null));
     }
 
@@ -56,7 +56,7 @@ class MantenimientoCitaServiceTest {
                 eq(fecha), eq(hora), eq(2), eq(4), eq("VIRTUAL"), eq("control"),
                 eq(7), eq(3))).thenReturn(1);
 
-        new MantenimientoCitaService(jdbc).modificar(7, 3, 2, 4, fecha, hora, "VIRTUAL", "control");
+        new MantenimientoCitaService(jdbc, evento -> {}).modificar(7, 3, 2, 4, fecha, hora, "VIRTUAL", "control");
 
         verify(jdbc).update(org.mockito.ArgumentMatchers.contains("id_paciente=? AND estado='RESERVADA'"),
                 eq(fecha), eq(hora), eq(2), eq(4), eq("VIRTUAL"), eq("control"),

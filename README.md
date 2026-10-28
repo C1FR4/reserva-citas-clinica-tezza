@@ -1,116 +1,108 @@
-# Sistema de reserva de citas médicas — Clínica Padre Luis Tezza
+# Reserva de citas médicas — Clínica Tezza
 
-## Estado de la rama C1FR4
+Aplicación Java/Spring Boot con MySQL y tres roles: paciente, administrador y médico. La rama `C1FR4` incorpora registro público exclusivo de pacientes y notificaciones por correo, conservando el historial de login, permisos y CRUD.
 
-Esta rama integra el proyecto Spring Boot iniciado por una compañera con las pantallas HTML/CSS existentes. Ya funciona el acceso de pacientes con contraseña BCrypt y sesión HTTP, además de la consulta, reserva, modificación y cancelación de citas vinculadas a MySQL. El panel y la página de especialistas muestran datos reales. El panel administrativo cubre la consulta de citas, la gestión de perfiles médicos y la asignación de horarios.
+## Funciones
 
-El acceso de `admin` utiliza el mismo formulario de inicio de sesión y abre `/admin`. El panel administrativo permite consultar citas de toda la clínica, registrar y editar perfiles médicos, cambiar su estado, asignar o retirar horarios, exportar un listado XLSX y eliminar físicamente solo citas previamente canceladas. El alta de un perfil médico no crea una cuenta automáticamente. Para probar el rol médico se habilita una única cuenta `medicotest`, vinculada a un perfil existente. Los horarios con citas asociadas no se pueden retirar, y un médico con citas futuras no se puede desactivar hasta resolverlas.
+- Registro de pacientes con correo, datos personales y contraseña BCrypt. El servidor fija el rol `PACIENTE`; no admite elegir roles internos en el registro público.
+- Login con sesión HTTP, controles de acceso por rol y consultas limitadas al propietario de los registros.
+- Consulta de especialistas y cupos; reserva, modificación hasta dos veces y cancelación con al menos 24 horas de anticipación.
+- Administración de médicos, horarios y citas; exportación XLSX y eliminación física de citas previamente canceladas.
+- Agenda médica propia y registro manual de `ASISTIO` o `NO_ASISTIO` cuando comienza una cita activa, con asistencia pendiente.
+- Ficha por correo y recordatorio programado 24 horas antes, con cola persistente, reintentos y reprogramación al modificar o cancelar.
+- Herramienta local para crear cuentas internas de administrador y médico. No existe un registro web público para esos roles.
 
-## Estructura del proyecto
-
-La base Maven se generó con Spring Initializr para Java 21 y Spring Boot 4.1.1. El código de la aplicación está en `src/main/java/com/clinica/clinica`, las pantallas y sus recursos en `src/main/resources/static`, la vista administrativa Thymeleaf en `src/main/resources/templates`, y las pruebas en `src/test/java`. Las antiguas maquetas con nombres y médicos ficticios se conservan en `legacy/`, fuera del sitio servido por Spring.
-
-Las dependencias base son Spring Web MVC, Spring Data JPA, Thymeleaf, Validation y MySQL Driver. `spring-security-crypto` verifica contraseñas BCrypt. Guava normaliza texto de formularios, Apache Commons Validator valida correos y Apache POI genera el reporte XLSX; Logback llega mediante los starters de Spring Boot y registra accesos mediante SLF4J. H2 y los módulos de pruebas de Spring solo se usan al ejecutar tests. Data JPA ya incluye JDBC y el pool de conexiones. Node.js se usa como herramienta auxiliar para comprobar la sintaxis del JavaScript del frontend con `node --run check:js`; no ejecuta el servidor.
-
-El archivo `database/schema.sql` es una copia **idéntica** del DDL validado en el informe APF3. El archivo `script-prueba-incompleto.sql` recibido con el avance de la compañera no se ejecuta: define solo dos tablas, usa nombres/rol distintos y guarda una contraseña sin cifrar.
-
-Para el avance de reserva se agregó `database/migrations/001_medicos_sin_cuenta.sql`. Esta migración permite que un perfil médico de demostración tenga `id_usuario` nulo, sin crear nuevas cuentas de acceso. Es el único cambio respecto al DDL base del informe: las siete tablas, claves y relaciones permanecen. Tras aplicarla, `database/demo-especialistas.sql` agrega tres especialistas ficticios y sus turnos de forma idempotente. Las cuentas de prueba son `usuariotest`, `admin` y `medicotest`.
+La confirmación por enlace, la liberación automática por falta de respuesta y la historia clínica no forman parte de este avance. La exportación XLSX es un listado; no representa todos los indicadores agregados del informe.
 
 ## Requisitos
 
 - JDK 21 o superior.
-- MySQL 8 con un servidor en ejecución.
-- Acceso a MySQL Workbench o al cliente `mysql` para ejecutar `database/schema.sql` una vez. El script crea la base `clinica_tezza` y sus siete tablas.
+- MySQL 8 con soporte de restricciones `CHECK`; recomendado MySQL 8.4.
+- Internet para descargar las dependencias iniciales mediante Maven Wrapper.
+- Un servicio SMTP configurado si se desean correos reales.
 
-En PowerShell, si Maven selecciona un Java antiguo:
+Node.js es opcional y se utiliza para comprobar sintaxis JavaScript. El servidor se ejecuta con Spring Boot.
 
-```powershell
-$env:JAVA_HOME = 'C:\Program Files\Java\jdk-26'
-```
+## Instalación nueva de la base
 
-El proyecto incluye Maven Wrapper, así que no requiere instalar Maven aparte.
+Desde MySQL Workbench o el cliente `mysql`, ejecutar en este orden, una sola vez sobre una base nueva:
+
+1. `database/schema.sql`: crea `clinica_tezza` y sus siete tablas.
+2. `database/migrations/001_medicos_sin_cuenta.sql`: permite perfiles médicos sin cuenta de acceso.
+3. `database/migrations/003_registro_recordatorios.sql`: añade la programación y control de notificaciones.
+4. Opcionalmente, `database/demo-especialistas.sql`: agrega especialistas ficticios y sus horarios, sin credenciales de acceso.
+
+Si se usa otro nombre de base, ajustar las instrucciones `CREATE DATABASE`/`USE` de los scripts y `DB_NAME` en la configuración local. Para bases antiguas con el vínculo provisional del administrador al médico existe `002_desvincular_admin_medico.sql`; no es necesaria en una instalación nueva.
+
+`spring.jpa.hibernate.ddl-auto=validate` comprueba los mapeos al iniciar; no sustituye estos scripts. No se publican volcados de la base usada durante las pruebas ni credenciales de cuentas reales.
 
 ## Configuración local
 
-`application.properties` lee `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` y `PORT`. `.env.example` muestra los nombres; Spring no carga ese archivo automáticamente. Define las variables en tu terminal antes de iniciar:
+En PowerShell, desde la raíz del proyecto:
 
 ```powershell
-$env:DB_HOST = '127.0.0.1'
-$env:DB_PORT = '3306'
-$env:DB_NAME = 'clinica_tezza'
-$env:DB_USER = 'clinica_app'
-$env:DB_PASSWORD = Read-Host 'Contraseña de MySQL' -MaskInput
-.\mvnw.cmd spring-boot:run
+Copy-Item .env.example .env.grupo.local
 ```
 
-Abre `http://localhost:8080/`. No abras los HTML como archivos locales ni mediante Live Server: el login requiere el servidor Spring.
+Editar `.env.grupo.local` con el host, puerto, base y usuario de MySQL propios. Si `DB_PASSWORD` queda vacío, las herramientas la solicitan localmente sin mostrarla. El ejemplo usa MySQL en `3306`, base `clinica_tezza` y aplicación en `8081`.
 
-Para comprobar la conexión, el inicio de Spring valida las entidades contra el esquema (`ddl-auto=validate`). Si falta MySQL o el DDL, la aplicación informa el fallo al arrancar. No crea ni cambia tablas automáticamente.
+Este archivo local está ignorado por Git. No se proporcionan credenciales SMTP: completar `MAIL_USERNAME`, `MAIL_PASSWORD` y `MAIL_FROM` localmente, y activar `MAIL_ENABLED=true` para enviar correos. Con `MAIL_ENABLED=false` el procesador permanece deshabilitado.
 
-## Crear un paciente de prueba
-
-Después de ejecutar el DDL, aplica `database/migrations/001_medicos_sin_cuenta.sql` y luego inicia una vez el perfil `seed`. Inserta `usuariotest` como paciente y `admin` como administrador, además de un médico sin cuenta de acceso y con horarios de lunes a viernes de 08:00 a 13:00 si aún no existe. El seed también elimina un posible vínculo antiguo entre `admin` y un perfil médico. Ambas contraseñas se cifran con BCrypt. Usa un DNI de prueba de ocho dígitos que no esté repetido.
+Los scripts de `scripts/grupo/` cargan ese archivo. Spring no carga un `.env` automáticamente; al ejecutar desde un IDE o directamente con Maven se deben definir las variables equivalentes.
 
 ```powershell
-$env:SEED_EMAIL = 'usuariotest'
-$env:SEED_PASSWORD = Read-Host 'Clave de prueba (8 caracteres, minúscula, mayúscula, dígito y símbolo)' -MaskInput
-$env:SEED_ADMIN_PASSWORD = Read-Host 'Clave del administrador (8 caracteres, minúscula, mayúscula, dígito y símbolo)' -MaskInput
-$env:SEED_NOMBRE = 'Usuario'
-$env:SEED_APELLIDO = 'Test'
-$env:SEED_DNI = '12345678'
-$env:SEED_FECHA_NACIMIENTO = '1995-05-20'
-$env:SEED_GENERO = 'FEMENINO'
-.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=seed'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/grupo/iniciar.ps1
 ```
 
-Cuando termine el perfil `seed`, detén el servidor y vuelve a iniciarlo sin ese perfil. Elimina las variables temporales con `Remove-Item Env:SEED_PASSWORD, Env:SEED_ADMIN_PASSWORD`.
+Abrir `http://127.0.0.1:8081/InicioSesion.html`. Conservar la terminal abierta; `Ctrl+C` detiene el servidor. No abrir los HTML mediante `file://` o Live Server.
 
-Para mostrar cuatro especialistas sin crear más cuentas, ejecuta después el script de demostración en MySQL Workbench o con el cliente `mysql`:
+## Crear cuentas
 
-```text
-database/demo-especialistas.sql
-```
+Los pacientes se registran desde **Regístrate aquí** en el login y luego acceden con su correo. El registro no solicita la contraseña del buzón del paciente.
 
-El script se puede volver a ejecutar: identifica los médicos por correo y evita repetir los turnos. Si reutilizas una base creada con el seed antiguo, ejecuta también `database/migrations/002_desvincular_admin_medico.sql` para retirar el vínculo provisional previo; en una base nueva no hace falta. La pantalla **Especialistas** muestra los días y horas de cada uno; **Reservar cita** propone la próxima fecha en que atiende el médico elegido y permite cambiarla.
-
-## Cuenta médica de demostración
-
-Después de cargar los especialistas, vincula una sola cuenta `medicotest` a un médico existente. El DNI `87654324` corresponde al perfil de Ana Vargas en los datos de demostración. La clave queda cifrada con BCrypt. El perfil se ejecuta una vez, sin servidor web:
+Para crear un administrador propio:
 
 ```powershell
-$env:SEED_MEDICO_DNI = '87654324'
-$env:SEED_MEDICO_PASSWORD = Read-Host 'Clave de medicotest (8 caracteres, minúscula, mayúscula, dígito y símbolo)' -MaskInput
-.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=seed-medico' '-Dspring-boot.run.arguments=--spring.main.web-application-type=none'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/grupo/crear-admin.ps1
 ```
 
-Inicia después la aplicación sin ese perfil. `medicotest` abre `/medico`, consulta únicamente sus citas y puede registrar asistencia cuando comienza una cita activa. Los controladores y el servicio verifican que la cita pertenece al médico autenticado.
+La herramienta pide usuario, datos de contacto y contraseña. Se ejecuta con el perfil interno `cuenta-interna`, sin servidor web, y no sobrescribe cuentas existentes.
 
-## Comprobación del flujo
+Para crear el acceso de un médico, primero debe existir su perfil activo y sin cuenta. Se puede usar un especialista de demostración o registrarlo desde el panel administrativo. Después:
 
-1. Abre `http://localhost:8080/InicioSesion.html` e inicia sesión con la cuenta de prueba.
-2. Verifica que `PantallaPrincipal.html` muestre el nombre registrado.
-3. Cierra sesión y prueba abrir directamente `http://localhost:8080/PantallaPrincipal.html`: debe volver al login.
-4. Una clave incorrecta debe mostrar un error y no abrir el panel.
-5. En el panel, abre **Reservar cita**, elige una fecha laboral y uno de los espacios disponibles. La reserva debe aparecer en **Mis citas** y en el panel. Desde **Mis citas** puedes modificar la reserva hasta dos veces o cancelarla, siempre con al menos 24 horas de anticipación. La edición permite elegir un nuevo especialista y horario disponibles.
-6. En **Especialistas**, comprueba que el listado provenga de MySQL. El botón del médico debe abrir **Reservar cita** con ese especialista seleccionado. Desde la reserva, vuelve a **Especialistas** y comprueba que el enlace de **Mis citas** siga funcionando y que el nombre del paciente sea correcto.
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/grupo/crear-medico.ps1
+```
 
-Pruebas automáticas del controlador:
+Indicar el DNI del perfil, un usuario nuevo y la contraseña elegida. El vínculo no cambia el correo, los datos ni los horarios del especialista. Crear un perfil desde el panel no genera automáticamente su cuenta.
+
+Todas las herramientas nuevas aplican cinco condiciones: mínimo ocho caracteres, minúscula, mayúscula, dígito y símbolo; además rechazan espacios y claves que excedan 72 bytes para BCrypt. Los inicializadores de demostración anteriores siguen disponibles bajo sus perfiles explícitos, pero no se ejecutan al arrancar normalmente.
+
+## Correo
+
+Spring Mail utiliza la configuración SMTP local. Gmail admite `smtp.gmail.com:587` con autenticación y STARTTLS; requiere credenciales compatibles con la cuenta remitente. Ninguna contraseña o remitente personal se incluye en este repositorio.
+
+La cola reside en la tabla `recordatorio`, dentro de las siete tablas originales. Los mensajes se guardan en la misma transacción que la reserva y el procesador los envía en ciclos de 30 segundos por defecto. El servidor debe permanecer encendido; las citas ya pasadas no reciben recordatorios atrasados. Reservas con menos de 24 horas reciben la ficha sin un segundo aviso inmediato.
+
+Para detalles de reintentos, cancelaciones, prueba SMTP local y límites de entrega, consultar [REGISTRO_Y_RECORDATORIOS.md](REGISTRO_Y_RECORDATORIOS.md). El script auxiliar `iniciar-gmail.ps1` conserva compatibilidad con la configuración privada de este equipo; para otra instalación usar las variables propias o las herramientas de `scripts/grupo/`.
+
+## Estructura
+
+- `src/main/java/com/clinica/clinica`: modelos, repositorios, servicios, controladores y configuración.
+- `src/main/resources/static`: portal del paciente y recursos frontend.
+- `src/main/resources/templates`: vistas Thymeleaf del administrador y médico.
+- `database`: DDL, migraciones y catálogo médico ficticio.
+- `src/test/java`: pruebas de permisos, contraseñas, registro, CRUD, asistencia, reportes y correo.
+
+## Verificación
 
 ```powershell
 .\mvnw.cmd test
-```
-
-Para revisar la sintaxis de los scripts del frontend con Node.js:
-
-```powershell
 node --run check:js
 ```
 
-Las pruebas automáticas cubren reglas y acceso mediante mocks y H2. El 25/10/2026 se comprobó también el flujo completo sobre MySQL 8.4.13 local: login de los tres roles, reserva y modificación de cita, cancelación, rechazo de eliminación de una cita activa, eliminación administrativa de una cita cancelada, agenda del médico, exportación XLSX y restricciones de acceso. La disponibilidad excluye las horas ya ocupadas por el médico o por el paciente.
+La versión ampliada se comprobó con 39 pruebas automatizadas, flujos en MySQL, SMTP local, registro en navegador y envío real de prueba autorizado. Los tests usan simulaciones y H2; no todos ejecutan MySQL ni envían correos. Los registros y capturas locales se conservan fuera de Git.
 
-## Alcance y pendientes
+## Evidencias para la sustentación
 
-- La reserva usa espacios de 30 minutos dentro de los rangos de `horario`. El DDL impide que dos citas activas ocupen el mismo espacio del médico o del paciente.
-- La agenda del médico, el registro de asistencia, la modificación de citas y la exportación XLSX administrativa están implementados en esta rama. La creación pública de cuentas de pacientes, la confirmación y el envío de recordatorios siguen pendientes.
-- La integración con MySQL 8.4.11 se verificó localmente el 21/10/2026 con el DDL de siete tablas: arranque con `ddl-auto=validate`, creación de un paciente de prueba, login, lectura del panel y cierre de sesión. En otra máquina se debe configurar su propia instancia MySQL y las variables `DB_*`.
-- La repetición del 25/10/2026 usó una instancia portátil aislada en `127.0.0.1:3307`, con las siete tablas del esquema y los médicos y horarios de demostración. El registro está en `_trabajo_apf3/12_pruebas_e2e/PRUEBAS_E2E.txt`.
+Se conservan los commits `3a77eae` (login, roles y contraseñas) y `253eb91` (CRUD de citas). Las ampliaciones se publican en un commit posterior, sin reescribir esos antecedentes. Para exponer las evidencias históricas se deben abrir sus archivos en el commit correspondiente.

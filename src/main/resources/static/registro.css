@@ -1,0 +1,12 @@
+.login-formulario { padding: 30px; }
+.login-formulario form { max-width: 580px; }
+.login-formulario h2 { font-size: 30px; }
+.subtitulo { line-height: 1.5; margin-bottom: 24px; }
+.campos-registro { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+select { width: 100%; padding: 15px; border: 1px solid #d8e0e8; border-radius: 10px; margin-bottom: 20px; background: white; font-size: 14px; }
+.ayuda-clave { font-size: 13px; color: #526779; margin: -10px 0 20px; line-height: 1.5; }
+.registro-exito { padding: 14px; background: #e7f3eb; color: #205633; margin-bottom: 15px; border-radius: 10px; line-height: 1.5; }
+button:disabled { opacity: .6; cursor: wait; }
+@media (max-width: 1050px) { .login-info { width: 40%; padding: 30px; } .texto-login h1 { font-size: 40px; } .login-formulario { width: 60%; } }
+@media (max-width: 800px) { .login-formulario { width: 100%; padding: 20px; } }
+@media (max-width: 450px) { .campos-registro { grid-template-columns: 1fr; } }

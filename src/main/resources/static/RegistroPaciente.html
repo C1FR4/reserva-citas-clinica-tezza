@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crear cuenta de paciente | Clínica Tezza</title>
+  <link rel="stylesheet" href="iniciosesion.css" />
+  <link rel="stylesheet" href="registro.css" />
+</head>
+<body>
+  <main class="contenedor-login">
+    <section class="login-info">
+      <div class="logo-login">CLÍNICA TEZZA</div>
+      <div class="texto-login"><span>CLÍNICA PADRE LUIS TEZZA</span>
+        <h1>Tu próxima cita<br />empieza aquí.</h1>
+        <p>Crea tu cuenta de paciente para consultar especialistas y reservar tus citas.</p>
+      </div>
+    </section>
+    <section class="login-formulario">
+      <form id="registro-form">
+        <h2>Crea tu cuenta</h2>
+        <p class="subtitulo">Registro de pacientes. Usa tu correo personal para acceder y recibir la información de tus citas.</p>
+        <div class="campos-registro">
+          <div><label for="nombre">Nombres</label><input id="nombre" name="nombre" maxlength="80" autocomplete="given-name" required /></div>
+          <div><label for="apellido">Apellidos</label><input id="apellido" name="apellido" maxlength="100" autocomplete="family-name" required /></div>
+          <div><label for="dni">DNI</label><input id="dni" name="dni" inputmode="numeric" pattern="[0-9]{8}" minlength="8" maxlength="8" title="Ingresa los 8 dígitos de tu DNI" required /></div>
+          <div><label for="fechaNacimiento">Fecha de nacimiento</label><input id="fechaNacimiento" name="fechaNacimiento" type="date" autocomplete="bday" required /></div>
+          <div><label for="genero">Género</label><select id="genero" name="genero" required><option value="">Selecciona</option><option value="FEMENINO">Femenino</option><option value="MASCULINO">Masculino</option><option value="OTRO">Otro</option><option value="NO_ESPECIFICA">Prefiero no indicarlo</option></select></div>
+          <div><label for="telefono">Teléfono</label><input id="telefono" name="telefono" type="tel" pattern="[+0-9\(\) \-]{7,20}" maxlength="20" autocomplete="tel" required /></div>
+        </div>
+        <label for="correo">Correo electrónico</label><input id="correo" name="correo" type="email" maxlength="120" autocomplete="email" required />
+        <label for="contrasena">Contraseña</label><input id="contrasena" name="contrasena" type="password" minlength="8" maxlength="72" autocomplete="new-password" aria-describedby="reglas-clave" required />
+        <p id="reglas-clave" class="ayuda-clave">Mínimo 8 caracteres, con minúscula, mayúscula, número y símbolo. Sin espacios.</p>
+        <label for="confirmarContrasena">Confirma tu contraseña</label><input id="confirmarContrasena" name="confirmarContrasena" type="password" minlength="8" maxlength="72" autocomplete="new-password" required />
+        <p id="registro-error" class="login-error" role="alert" hidden></p>
+        <p id="registro-exito" class="registro-exito" role="status" hidden></p>
+        <button type="submit">Crear cuenta de paciente</button>
+        <p class="registro">¿Ya tienes cuenta? <a href="InicioSesion.html">Inicia sesión</a></p>
+      </form>
+    </section>
+  </main>
+  <script src="registro.js" defer></script>
+</body>
+</html>

@@ -3,6 +3,9 @@ package com.clinica.clinica.controlador;
 import com.clinica.clinica.modelo.Paciente;
 import com.clinica.clinica.repositorio.PacienteRepository;
 import com.clinica.clinica.servicio.MantenimientoCitaService;
+import com.clinica.clinica.servicio.CitaNotificable;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.time.DateTimeException;
@@ -42,12 +45,14 @@ public class CitaController {
     private final JdbcTemplate jdbc;
     private final PacienteRepository pacientes;
     private final MantenimientoCitaService mantenimiento;
+    private final ApplicationEventPublisher eventos;
 
     public CitaController(JdbcTemplate jdbc, PacienteRepository pacientes,
-                          MantenimientoCitaService mantenimiento) {
+                           MantenimientoCitaService mantenimiento, ApplicationEventPublisher eventos) {
         this.jdbc = jdbc;
         this.pacientes = pacientes;
         this.mantenimiento = mantenimiento;
+        this.eventos = eventos;
     }
 
     public record HorarioSemanal(String dia, String inicio, String fin) {}
@@ -101,6 +106,7 @@ public class CitaController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<?> reservar(@RequestBody NuevaCita nueva, HttpServletRequest request) {
         Paciente paciente = pacienteActual(request);
         if (paciente == null) return sinSesion();
@@ -135,7 +141,9 @@ public class CitaController {
                 ps.setInt(7, nueva.idHorario());
                 return ps;
             }, clave);
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("idCita", clave.getKey().intValue()));
+            int idCita = clave.getKey().intValue();
+            eventos.publishEvent(new CitaNotificable(idCita, CitaNotificable.FICHA));
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("idCita", idCita));
         } catch (DateTimeException error) {
             return error(HttpStatus.BAD_REQUEST, "Fecha u hora no válida.");
         } catch (DataIntegrityViolationException error) {
@@ -176,6 +184,7 @@ public class CitaController {
     }
 
     @PostMapping("/{id}/cancelar")
+    @Transactional
     public ResponseEntity<?> cancelar(@PathVariable int id, HttpServletRequest request) {
         Paciente paciente = pacienteActual(request);
         if (paciente == null) return sinSesion();
@@ -184,6 +193,7 @@ public class CitaController {
                         "AND TIMESTAMP(fecha, hora)>=DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 24 HOUR)",
                 id, paciente.getIdPaciente());
         if (cambios == 0) return error(HttpStatus.CONFLICT, "Esta cita no se puede cancelar.");
+        eventos.publishEvent(new CitaNotificable(id, CitaNotificable.CANCELACION));
         return ResponseEntity.noContent().build();
     }
 

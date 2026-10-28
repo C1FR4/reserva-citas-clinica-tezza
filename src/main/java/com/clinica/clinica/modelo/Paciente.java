@@ -30,7 +30,7 @@ public class Paciente {
     @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate fechaNacimiento;
 
-    @Column(name = "dni", nullable = false, length = 8)
+    @Column(name = "dni", nullable = false, unique = true, length = 8)
     private String dni;
 
     @Column(name = "telefono", length = 20)
