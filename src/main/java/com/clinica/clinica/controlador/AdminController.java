@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+// Controlador para la descarga de reportes
 @Controller
 public class AdminController {
     private final AdminService admin;
@@ -25,7 +26,8 @@ public class AdminController {
 
     @GetMapping("/admin/citas/exportar")
     public ResponseEntity<byte[]> exportarCitas(HttpSession session) {
-        if (!esAdministrador(session)) return ResponseEntity.status(403).build();
+        if (!esAdministrador(session))
+            return ResponseEntity.status(403).build();
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
@@ -35,8 +37,9 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String panel(@RequestParam(required = false) Integer medico, Model model,
-                        HttpSession session) {
-        if (!esAdministrador(session)) return "redirect:/InicioSesion.html";
+            HttpSession session) {
+        if (!esAdministrador(session))
+            return "redirect:/InicioSesion.html";
         var medicos = admin.medicos();
         var horarios = admin.horarios();
         model.addAttribute("medicos", medicos);
@@ -45,21 +48,23 @@ public class AdminController {
         model.addAttribute("totalMedicos", medicos.size());
         model.addAttribute("totalHorarios", horarios.size());
         model.addAttribute("totalCitas", admin.totalCitas());
-        if (medico != null) model.addAttribute("medicoEditar", admin.medico(medico));
+        if (medico != null)
+            model.addAttribute("medicoEditar", admin.medico(medico));
         return "admin";
     }
 
     @PostMapping("/admin/medicos/guardar")
     public String guardarMedico(@RequestParam(required = false) Integer idMedico,
-                                @RequestParam String nombre,
-                                @RequestParam String apellido,
-                                @RequestParam String dni,
-                                @RequestParam String correo,
-                                @RequestParam String especialidad,
-                                @RequestParam(required = false) String telefono,
-                                @RequestParam(defaultValue = "ACTIVO") String estado,
-                                RedirectAttributes mensajes, HttpSession session) {
-        if (!esAdministrador(session)) return "redirect:/InicioSesion.html";
+            @RequestParam String nombre,
+            @RequestParam String apellido,
+            @RequestParam String dni,
+            @RequestParam String correo,
+            @RequestParam String especialidad,
+            @RequestParam(required = false) String telefono,
+            @RequestParam(defaultValue = "ACTIVO") String estado,
+            RedirectAttributes mensajes, HttpSession session) {
+        if (!esAdministrador(session))
+            return "redirect:/InicioSesion.html";
         try {
             admin.guardarMedico(idMedico, nombre, apellido, dni, correo, especialidad,
                     telefono, estado);
@@ -74,9 +79,10 @@ public class AdminController {
 
     @PostMapping("/admin/horarios/guardar")
     public String agregarHorario(@RequestParam int idMedico, @RequestParam String dia,
-                                 @RequestParam String horaInicio, @RequestParam String horaFin,
-                                 RedirectAttributes mensajes, HttpSession session) {
-        if (!esAdministrador(session)) return "redirect:/InicioSesion.html";
+            @RequestParam String horaInicio, @RequestParam String horaFin,
+            RedirectAttributes mensajes, HttpSession session) {
+        if (!esAdministrador(session))
+            return "redirect:/InicioSesion.html";
         try {
             admin.agregarHorario(idMedico, dia, horaInicio, horaFin);
             mensajes.addFlashAttribute("mensajeExito", "Horario asignado correctamente.");
@@ -88,8 +94,9 @@ public class AdminController {
 
     @PostMapping("/admin/horarios/quitar")
     public String quitarHorario(@RequestParam int idHorario, RedirectAttributes mensajes,
-                                HttpSession session) {
-        if (!esAdministrador(session)) return "redirect:/InicioSesion.html";
+            HttpSession session) {
+        if (!esAdministrador(session))
+            return "redirect:/InicioSesion.html";
         try {
             admin.quitarHorario(idHorario);
             mensajes.addFlashAttribute("mensajeExito", "Horario retirado.");
@@ -101,8 +108,9 @@ public class AdminController {
 
     @PostMapping("/admin/citas/eliminar")
     public String eliminarCitaCancelada(@RequestParam int idCita, RedirectAttributes mensajes,
-                                       HttpSession session) {
-        if (!esAdministrador(session)) return "redirect:/InicioSesion.html";
+            HttpSession session) {
+        if (!esAdministrador(session))
+            return "redirect:/InicioSesion.html";
         try {
             admin.eliminarCitaCancelada(idCita);
             mensajes.addFlashAttribute("mensajeExito", "Cita cancelada eliminada definitivamente.");

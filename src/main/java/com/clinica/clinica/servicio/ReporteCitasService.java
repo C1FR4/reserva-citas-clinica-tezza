@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+// Servicio de generacion de reportes en Excel
 /** Exporta el listado administrativo de citas a un archivo XLSX. */
 @Service
 public class ReporteCitasService {
