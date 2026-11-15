@@ -82,6 +82,25 @@ Todas las herramientas nuevas aplican cinco condiciones: mínimo ocho caracteres
 
 Spring Mail utiliza la configuración SMTP local. Gmail admite `smtp.gmail.com:587` con autenticación y STARTTLS; requiere credenciales compatibles con la cuenta remitente. Ninguna contraseña o remitente personal se incluye en este repositorio.
 
+### Repetir la prueba con correos reales
+
+Durante el desarrollo se probó el envío a buzones Gmail reales: al registrar un paciente con un correo propio y reservar una cita, llegó la ficha de la reserva; el recordatorio se envía 24 horas antes de la atención. Para repetirlo en otra instalación, configura primero MySQL y arranca la aplicación como se indica arriba. En el archivo local `.env.grupo.local` (ignorado por Git), usa **tu propia cuenta remitente**:
+
+```dotenv
+MAIL_ENABLED=true
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=tu-remitente@gmail.com
+MAIL_PASSWORD=tu-contraseña-de-aplicacion
+MAIL_FROM=tu-remitente@gmail.com
+MAIL_AUTH=true
+MAIL_STARTTLS=true
+```
+
+Para Gmail, `MAIL_PASSWORD` es una [contraseña de aplicación de Google](https://support.google.com/accounts/answer/185833?hl=es), disponible cuando la cuenta admite esa opción y tiene verificación en dos pasos; no es la contraseña habitual del buzón. Inicia el proyecto con `scripts/grupo/iniciar.ps1`, registra un paciente usando un correo de destino al que tengas acceso y reserva una cita futura. El paciente solo proporciona su dirección para recibir mensajes: no entrega la contraseña de su correo. La ficha se procesa en el siguiente ciclo (aproximadamente cada 30 segundos); para observar el recordatorio real, la cita debe estar a más de 24 horas y el servidor debe seguir en ejecución hasta ese momento.
+
+Con otro proveedor SMTP, sustituye host, puerto y opciones de autenticación por los de ese proveedor. Las pruebas automatizadas descritas abajo verifican el plazo de 24 horas sin esperar un día ni usar cuentas reales.
+
 La cola reside en la tabla `recordatorio`, dentro de las siete tablas originales. Los mensajes se guardan en la misma transacción que la reserva y el procesador los envía en ciclos de 30 segundos por defecto. El servidor debe permanecer encendido; las citas ya pasadas no reciben recordatorios atrasados. Reservas con menos de 24 horas reciben la ficha sin un segundo aviso inmediato.
 
 Para detalles de reintentos, cancelaciones, prueba SMTP local y límites de entrega, consultar [REGISTRO_Y_RECORDATORIOS.md](REGISTRO_Y_RECORDATORIOS.md). El script auxiliar `iniciar-gmail.ps1` conserva compatibilidad con la configuración privada de este equipo; para otra instalación usar las variables propias o las herramientas de `scripts/grupo/`.
