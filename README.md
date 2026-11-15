@@ -1,6 +1,6 @@
 # Reserva de citas médicas — Clínica Tezza
 
-Aplicación Java/Spring Boot con MySQL y tres roles: paciente, administrador y médico. La rama `C1FR4` incorpora registro público exclusivo de pacientes y notificaciones por correo, conservando el historial de login, permisos y CRUD.
+Aplicación Java/Spring Boot con MySQL y tres roles: paciente, administrador y médico. Incluye registro público exclusivo de pacientes, login, permisos, CRUD de citas y notificaciones por correo.
 
 ## Funciones
 
@@ -95,6 +95,18 @@ Para detalles de reintentos, cancelaciones, prueba SMTP local y límites de entr
 - `src/test/java`: pruebas de permisos, contraseñas, registro, CRUD, asistencia, reportes y correo.
 
 ## Verificación
+
+### Comprobar los recordatorios sin Gmail ni credenciales
+
+Las pruebas de correo usan H2 en memoria y un remitente simulado (`JavaMailSender`); no se conectan a Gmail ni necesitan una cuenta SMTP o una base MySQL local. Desde la raíz del repositorio, con JDK 21 o superior:
+
+```powershell
+.\mvnw.cmd -Dtest=CorreoCitasTest test
+```
+
+Estas pruebas verifican la programación del recordatorio 24 horas antes de la cita, el envío al llegar el plazo, la ausencia de duplicados y el manejo de fallos. El envío a buzones Gmail reales se probó con configuración privada y requiere un SMTP propio; las credenciales no forman parte de este repositorio.
+
+### Comprobar el proyecto completo
 
 ```powershell
 .\mvnw.cmd test
